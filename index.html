@@ -55,21 +55,21 @@
       gap:10px;
     }
     .top-bar-title{
-      font-size:1.55rem; /* +~10px feel */
+      font-size:1.55rem;
       flex:1;
       text-align:center;
       min-height:1.4em;
       opacity:.95;
     }
     .top-arrow{
-      width:38px;               /* bigger */
+      width:38px;
       height:38px;
       display:flex;
       align-items:center;
       justify-content:center;
       border-radius:50%;
       border:2px solid var(--white);
-      font-size:1.7rem;         /* bigger */
+      font-size:1.7rem;
       background:transparent;
       color:var(--white);
     }
@@ -78,7 +78,7 @@
       max-width:1100px;
       margin:0 auto 14px;
       text-align:center;
-      font-size:1.25rem; /* bigger */
+      font-size:1.25rem;
       opacity:0.85;
     }
 
@@ -91,7 +91,7 @@
     .game.active{ display:block; }
 
     h2{
-      font-size:1.55rem; /* bigger */
+      font-size:1.55rem;
       margin-bottom:8px;
       text-align:center;
       color:var(--purple-dark);
@@ -102,7 +102,7 @@
       border-radius:18px;
       padding:12px 16px;
       text-align:center;
-      font-size:1.35rem; /* bigger */
+      font-size:1.35rem;
       margin:0 auto 14px;
       border:2px solid rgba(108,74,163,.15);
     }
@@ -122,7 +122,7 @@
       border:2px solid var(--purple-dark);
       background:var(--purple-mid);
       color:var(--white);
-      font-size:1.25rem; /* bigger */
+      font-size:1.25rem;
     }
     .secondary{
       padding:8px 14px;
@@ -130,20 +130,20 @@
       border:2px solid var(--purple-mid);
       background:white;
       color:var(--ink);
-      font-size:1.15rem; /* bigger */
+      font-size:1.15rem;
     }
     .pill{
       background:var(--white);
       border-radius:999px;
       padding:8px 14px;
       border:2px solid rgba(108,74,163,.15);
-      font-size:1.2rem; /* bigger */
+      font-size:1.2rem;
     }
 
     .feedback{
       margin-top:10px;
       min-height:1.4em;
-      font-size:1.35rem; /* bigger */
+      font-size:1.35rem;
       text-align:center;
     }
     .feedback.ok{ color:#117a3a; }
@@ -162,14 +162,9 @@
 
     /* single prompt line: "spillen, du" */
     .promptLine{
-      font-size:2.75rem; /* bigger */
+      font-size:2.75rem;
       color:var(--purple-dark);
       line-height:1.1;
-    }
-    .subLine{
-      margin-top:10px;
-      font-size:1.4rem;
-      opacity:.9;
     }
 
     /* ===== Choice buttons ===== */
@@ -185,7 +180,7 @@
       border-radius:16px;
       border:2px solid rgba(108,74,163,.18);
       background:var(--white);
-      font-size:1.35rem; /* bigger */
+      font-size:1.35rem;
       min-width: 210px;
     }
     .choice:active{ transform: scale(.98); }
@@ -203,7 +198,7 @@
       100%{ box-shadow:none; }
     }
 
-    /* ===== Mini table (fill red cells) ===== */
+    /* ===== Mini table ===== */
     table{
       width: min(860px, 100%);
       margin: 0 auto;
@@ -217,7 +212,7 @@
       border:1px solid rgba(108,74,163,.18);
       padding:12px;
       text-align:center;
-      font-size:1.35rem; /* bigger */
+      font-size:1.35rem;
     }
     th{
       background: rgba(183,162,229,.35);
@@ -234,7 +229,7 @@
       border-radius:12px;
       border:2px solid rgba(108,74,163,.18);
       background: #fff;
-      font-size:1.25rem; /* bigger */
+      font-size:1.25rem;
     }
 
     /* ===== Build from parts ===== */
@@ -268,7 +263,7 @@
       border:2px solid rgba(108,74,163,.12);
       border-radius:14px;
       padding:10px 14px;
-      font-size:1.55rem; /* bigger */
+      font-size:1.55rem;
       user-select:none;
       cursor:pointer;
     }
@@ -284,7 +279,7 @@
       border:2px solid rgba(108,74,163,.15);
       padding:14px;
       text-align:center;
-      font-size:2.0rem; /* bigger */
+      font-size:2.0rem;
     }
 
     /* Modal */
@@ -344,7 +339,7 @@
       </div>
     </section>
 
-    <!-- G2 (moved to front): Build from parts -->
+    <!-- G2: Build from parts (moved up) -->
     <section class="game" id="g9">
       <h2>Bauen: Stamm + Endung</h2>
       <div class="instruction-box">Wiel e Stamm an eng Endung. Du kanns probéieren (och falsch).</div>
@@ -373,9 +368,9 @@
       <div class="feedback" id="g9Fb"></div>
     </section>
 
-    <!-- G3 (was G2): Stem/Ending/Nothing, showing conjugated form already -->
+    <!-- G3: Stem/Ending/None/Both -->
     <section class="game" id="g2">
-      <h2>Stamm / Endung / Näischt?</h2>
+      <h2>Stamm, Endung, Näischt, déi zwee</h2>
       <div class="instruction-box">Hei steet schonn d’konjugéiert Form. Wat ännert sech am Verglach mam Infinitiv?</div>
       <div class="row-center">
         <button class="secondary" id="g2Mix">Nei mixen</button>
@@ -387,12 +382,13 @@
           <button class="choice" id="g2Stem">Stamm</button>
           <button class="choice" id="g2End">Endung</button>
           <button class="choice" id="g2None">Näischt</button>
+          <button class="choice" id="g2Both">déi zwee</button>
         </div>
       </div>
       <div class="feedback" id="g2Fb"></div>
     </section>
 
-    <!-- G4 (was G3): MCQ -->
+    <!-- G4: MCQ -->
     <section class="game" id="g3">
       <h2>Richteg Form (3 Optiounen)</h2>
       <div class="instruction-box">Wiel déi richteg konjugéiert Form.</div>
@@ -407,7 +403,7 @@
       <div class="feedback" id="g3Fb"></div>
     </section>
 
-    <!-- G5 (was G5): Fill red cells (each verb once, then auto next game) -->
+    <!-- G5: Fill red cells (each verb once, then auto next game) -->
     <section class="game" id="g5">
       <h2>Fëll d’rout Felder</h2>
       <div class="instruction-box">Fëll just: du / hien-hatt / dir. Klick “Kontrolléieren”. (All Verb kënnt just eemol.)</div>
@@ -427,7 +423,7 @@
       <div class="feedback" id="g5Fb"></div>
     </section>
 
-    <!-- G6 (was G7): Race -->
+    <!-- G6: Race -->
     <section class="game" id="g7">
       <h2>Konjugatiouns-Race</h2>
       <div class="instruction-box">Soen et aus. Klick “Äntwert weisen” fir d’Léisung (wann néideg).</div>
@@ -443,7 +439,7 @@
       </div>
     </section>
 
-    <!-- G7 (was G8): Fix the mistake -->
+    <!-- G7: Fix the mistake -->
     <section class="game" id="g8">
       <h2>Feeler verbesseren</h2>
       <div class="instruction-box">Wiel déi richteg Form (dat anert ass falsch).</div>
@@ -494,6 +490,7 @@ const IRREG_EXPLICIT = {
 
 // regulars (conjugate like spillen)
 const REGULAR = ["lauschteren","kucken","boxen","kachen","léieren","raschten","spadséieren","telefonéieren"];
+
 function stemOf(inf){
   if(inf.endsWith("en")) return inf.slice(0,-2);
   return inf;
@@ -519,7 +516,7 @@ REGULAR.forEach(v=>{
   VERBS.push({inf:v, forms: conjRegular(v), type:"regular"});
 });
 
-// stem-change verbs (from your worksheet red/green logic)
+// stem-change verbs
 const STEM_CHANGE = new Set(["fueren","schwammen","molen","lafen","maachen"]); // danzen/liesen treated as ending-only
 
 function shuffle(arr){
@@ -530,7 +527,6 @@ function shuffle(arr){
   }
   return a;
 }
-
 function randInt(n){ return Math.floor(Math.random()*n); }
 function pick(arr){ return arr[randInt(arr.length)]; }
 
@@ -571,7 +567,7 @@ function showGame(idx){
   gameIndex = idx;
   document.getElementById("topTitle").textContent = "";
 
-  // order now:
+  // order:
   // 0 g1, 1 g9, 2 g2, 3 g3, 4 g5, 5 g7, 6 g8
   if(idx===0) g1Render();
   if(idx===1) g9Render();
@@ -599,19 +595,10 @@ function personLabel(k){
   return PERSONS.find(p=>p.k===k).label;
 }
 function promptText(inf, personKey){
-  // requested overall form: "spillen, du"
   return `${inf}, ${personLabel(personKey)}`;
 }
 
-/* For G2: classify change compared to infinitive */
-function changeTypeComparedToInf(inf, personKey){
-  const corr = correctForm(inf, personKey);
-  if(corr === inf) return "näischt";
-  if(STEM_CHANGE.has(inf) && (personKey==="du" || personKey==="hienhatt" || personKey==="dir")) return "stamm";
-  return "endung";
-}
-
-/* ===================== DECKS (common) ===================== */
+/* ===================== DECKS ===================== */
 function buildPersonVerbDeck(){
   const deck=[];
   for(const v of VERBS){
@@ -631,7 +618,6 @@ function g1Render(){
   const item = g1Deck[g1Pos];
   document.getElementById("g1Prompt").textContent = promptText(item.inf, item.personKey);
 }
-
 document.getElementById("g1Next").addEventListener("click", ()=>{
   g1Pos++;
   if(g1Pos>=g1Deck.length){ g1Deck = buildPersonVerbDeck(); g1Pos=0; }
@@ -643,7 +629,27 @@ document.getElementById("g1Mix").addEventListener("click", ()=>{
   g1Render();
 });
 
-/* ===================== G9 Build from parts (now game #2) ===================== */
+/* ===================== COMMON WRONG FORM MAKERS (used by multiple games) ===================== */
+function makeEndingMistake(form){
+  if(form.endsWith("en")) return form.slice(0,-2) + "t";
+  if(form.endsWith("t")) return form.slice(0,-1) + "en";
+  if(form.endsWith("s")) return form.slice(0,-1) + "t";
+  return form + "t";
+}
+function makeStemMistake(inf, personKey){
+  const v = getVerb(inf);
+  const correct = v.forms[personKey];
+
+  if(STEM_CHANGE.has(inf) && (personKey==="du"||personKey==="hienhatt"||personKey==="dir")){
+    const echForm = v.forms["ech"];
+    const echStem = stemOf(echForm);
+    const ending = personKey==="du" ? "s" : "t";
+    return echStem + ending;
+  }
+  return makeEndingMistake(correct);
+}
+
+/* ===================== G9 Build from parts (upgraded stems) ===================== */
 let g9Deck = buildPersonVerbDeck();
 let g9Pos = 0;
 let g9SelStem = null;
@@ -652,9 +658,109 @@ let g9SelEnd = null;
 function splitStemEnd(inf, pk){
   const corr = correctForm(inf, pk);
   if(corr.endsWith("en")) return {stem: corr.slice(0,-2), end:"en"};
-  if(corr.endsWith("s")) return {stem: corr.slice(0,-1), end:"s"};
-  if(corr.endsWith("t")) return {stem: corr.slice(0,-1), end:"t"};
-  return {stem: corr, end:""}; // e.g. danz, lies
+  if(corr.endsWith("s"))  return {stem: corr.slice(0,-1), end:"s"};
+  if(corr.endsWith("t"))  return {stem: corr.slice(0,-1), end:"t"};
+  return {stem: corr, end:""};
+}
+
+/* --- stem option generators --- */
+function uniqueKeepOrder(arr){
+  const out = [];
+  const seen = new Set();
+  for(const x of arr){
+    const k = String(x);
+    if(!seen.has(k)){
+      seen.add(k);
+      out.push(k);
+    }
+  }
+  return out;
+}
+function vowelSwap(stem){
+  const swaps = [
+    ["a","e"],["a","i"],["a","o"],["a","u"],
+    ["e","a"],["e","i"],["e","o"],["e","u"],
+    ["i","a"],["i","e"],["i","o"],["i","u"],
+    ["o","a"],["o","e"],["o","i"],["o","u"],
+    ["u","a"],["u","e"],["u","i"],["u","o"],
+    ["ä","e"],["e","ä"],["ë","e"],["e","ë"]
+  ];
+  for(const [from,to] of swaps){
+    if(stem.includes(from)) return stem.replace(from, to);
+  }
+  return null;
+}
+function vowelDouble(stem){
+  const m = stem.match(/(ou|ei|ie|aa|ee|ii|oo|uu|ä|ë|a|e|i|o|u)/);
+  if(!m) return null;
+  const v = m[0];
+  return stem.replace(v, v + v);
+}
+function makeImaginaryStems(baseStem, avoidSet, needCount){
+  const fakes = [];
+  const tries = [];
+
+  const s1 = vowelSwap(baseStem);
+  if(s1) tries.push(s1);
+
+  const s2 = vowelDouble(baseStem);
+  if(s2) tries.push(s2);
+
+  if(s1){
+    const s3 = vowelDouble(s1);
+    if(s3) tries.push(s3);
+  }
+
+  tries.push(baseStem + "h");
+  tries.push(baseStem + "n");
+
+  for(const t of tries){
+    const k = String(t);
+    if(!avoidSet.has(k) && k.length >= 2){
+      avoidSet.add(k);
+      fakes.push(k);
+      if(fakes.length >= needCount) break;
+    }
+  }
+  return fakes;
+}
+function possibleRealStems(inf, pk){
+  const v = getVerb(inf);
+
+  const stemCorrect = splitStemEnd(inf, pk).stem;
+  const stemInf     = stemOf(inf);
+  const stemEch     = stemOf(v.forms.ech);
+  const stemDu      = stemOf(v.forms.du);
+  const stemHien    = stemOf(v.forms.hienhatt);
+  const stemDir     = stemOf(v.forms.dir);
+
+  return uniqueKeepOrder([stemCorrect, stemInf, stemEch, stemDu, stemHien, stemDir]);
+}
+function buildStemOptions(inf, pk, targetCount=4){
+  const real = possibleRealStems(inf, pk);
+  const avoid = new Set(real);
+
+  let stems = real.slice(0);
+
+  if(stems.length < targetCount){
+    const base = stems[0] || stemOf(inf) || inf;
+    const fakes = makeImaginaryStems(base, avoid, targetCount - stems.length);
+    stems = stems.concat(fakes);
+  }
+
+  const correctStem = splitStemEnd(inf, pk).stem;
+  if(!stems.includes(correctStem)){
+    stems.unshift(correctStem);
+    stems = uniqueKeepOrder(stems);
+  }
+
+  stems = uniqueKeepOrder(stems).slice(0, targetCount);
+  stems = shuffle(stems);
+
+  if(!stems.includes(correctStem)){
+    stems[0] = correctStem;
+  }
+  return stems;
 }
 
 function g9Render(){
@@ -669,13 +775,8 @@ function g9Render(){
   const corr = correctForm(item.inf, item.personKey);
   const parts = splitStemEnd(item.inf, item.personKey);
 
-  // stems options: correct + 2 plausible
-  let stemA = parts.stem;
-  let stemB = stemOf(correctForm(item.inf,"ech"));
-  let stemC = stemOf(item.inf);
-
-  const stems = shuffle(Array.from(new Set([stemA, stemB, stemC]))).slice(0,3);
-  while(stems.length<3) stems.push(stemA + "");
+  // upgraded stems: real alternatives first, otherwise imaginary vowel variants
+  const stems = buildStemOptions(item.inf, item.personKey, 4);
 
   // endings options
   let ends = shuffle(Array.from(new Set([parts.end, "en", "t", "s", ""]))).slice(0,4);
@@ -732,16 +833,35 @@ function g9Render(){
     }, ok ? 650 : 1100);
   };
 }
-
 document.getElementById("g9Mix").addEventListener("click", ()=>{
   g9Deck = buildPersonVerbDeck();
   g9Pos=0;
   g9Render();
 });
 
-/* ===================== G2 Stamm/Endung/Näischt (simplified) ===================== */
+/* ===================== G2 Stamm/Endung/Näischt/déi zwee ===================== */
 let g2Deck = buildPersonVerbDeck();
 let g2Pos = 0;
+
+function changeTypeComparedToInf(inf, personKey){
+  const corr = correctForm(inf, personKey);
+  if(corr === inf) return "näischt";
+
+  const infStem = stemOf(inf);
+  const infEnd = inf.endsWith("en") ? "en" : "";
+
+  const corrParts = splitStemEnd(inf, personKey);
+  const corrStem = corrParts.stem;
+  const corrEnd = corrParts.end;
+
+  const stemChanged = corrStem !== infStem;
+  const endChanged  = corrEnd !== infEnd;
+
+  if(stemChanged && endChanged) return "beides";  // label: "déi zwee"
+  if(stemChanged) return "stamm";
+  if(endChanged)  return "endung";
+  return "näischt";
+}
 
 function g2Render(){
   clearFb("g2Fb");
@@ -751,7 +871,7 @@ function g2Render(){
   const corr = correctForm(item.inf, item.personKey);
   document.getElementById("g2Prompt").textContent = `${item.inf} → ${corr}`;
 
-  const expected = changeTypeComparedToInf(item.inf, item.personKey); // "stamm"|"endung"|"näischt"
+  const expected = changeTypeComparedToInf(item.inf, item.personKey); // "stamm"|"endung"|"näischt"|"beides"
 
   function answer(choice){
     const ok = choice===expected;
@@ -763,36 +883,17 @@ function g2Render(){
   document.getElementById("g2Stem").onclick = ()=>answer("stamm");
   document.getElementById("g2End").onclick  = ()=>answer("endung");
   document.getElementById("g2None").onclick = ()=>answer("näischt");
+  document.getElementById("g2Both").onclick = ()=>answer("beides");
 }
-
 document.getElementById("g2Mix").addEventListener("click", ()=>{
   g2Deck = buildPersonVerbDeck();
   g2Pos=0;
   g2Render();
 });
 
-/* ===================== G3 MCQ 3 options ===================== */
+/* ===================== G3 MCQ ===================== */
 let g3Deck = buildPersonVerbDeck();
 let g3Pos = 0;
-
-function makeEndingMistake(form){
-  if(form.endsWith("en")) return form.slice(0,-2) + "t";
-  if(form.endsWith("t")) return form.slice(0,-1) + "en";
-  if(form.endsWith("s")) return form.slice(0,-1) + "t";
-  return form + "t";
-}
-function makeStemMistake(inf, personKey){
-  const v = getVerb(inf);
-  const correct = v.forms[personKey];
-
-  if(STEM_CHANGE.has(inf) && (personKey==="du"||personKey==="hienhatt"||personKey==="dir")){
-    const echForm = v.forms["ech"];
-    const echStem = stemOf(echForm);
-    const ending = personKey==="du" ? "s" : "t";
-    return echStem + ending;
-  }
-  return makeEndingMistake(correct);
-}
 
 function g3Render(){
   clearFb("g3Fb");
@@ -826,14 +927,13 @@ function g3Render(){
     wrap.appendChild(btn);
   });
 }
-
 document.getElementById("g3Mix").addEventListener("click", ()=>{
   g3Deck = buildPersonVerbDeck();
   g3Pos=0;
   g3Render();
 });
 
-/* ===================== G5 Fill red cells (each verb once, then next game) ===================== */
+/* ===================== G5 Fill red cells (each verb once) ===================== */
 let g5VerbDeck = shuffle(VERBS.map(v=>v.inf));
 let g5VerbPos = 0;
 let g5Verb = g5VerbDeck[g5VerbPos];
@@ -892,7 +992,6 @@ function g5AdvanceOrFinish(){
   g5VerbPos++;
   if(g5VerbPos >= g5VerbDeck.length){
     showModal("Bravo!", "Du hues all Verben am Spill gemaach!", ()=>{
-      // go to next game automatically
       showGame((gameIndex + 1) % gameEls.length);
     });
     return;
@@ -918,7 +1017,6 @@ document.getElementById("g5Check").addEventListener("click", ()=>{
     setFb("g5Fb","Nach net ganz. Probéier nach eng Kéier.", false);
   }
 });
-
 document.getElementById("g5NextVerb").addEventListener("click", ()=>{
   g5AdvanceOrFinish();
 });
@@ -987,7 +1085,6 @@ function g8Render(){
     wrap.appendChild(btn);
   });
 }
-
 document.getElementById("g8Mix").addEventListener("click", ()=>{
   g8Deck = buildPersonVerbDeck();
   g8Pos=0;
@@ -999,5 +1096,4 @@ showGame(0);
 </script>
 </body>
 </html>
-
 
