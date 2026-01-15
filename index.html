@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="lb">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>P4 – Verben (Konjugéieren)</title>
+
+  <style>
+    /* FONT */
+    @font-face{
+      font-family:'Schoulschrëft';
+      src:url('https://raw.githubusercontent.com/albrechtclaire1007/schoulschreft/main/schoulschreft_bold%5B2%5D.TTF')
+           format('truetype');
+      font-weight:bold;
+      font-style:normal;
+      font-display:swap;
+    }
+
+    :root{
+      --purple-mid:#b7a2e5;
+      --purple-light:#ebe3ff;
+      --purple-dark:#6c4aa3;
+      --ink:#2d1844;
+      --white:#fff;
+      --ok:#b7f0c8;
+      --bad:#ffcccc;
+    }
+
+    *{ margin:0; padding:0; box-sizing:border-box; }
+
+    body{
+      font-family:'Schoulschrëft', system-ui, sans-serif;
+      background:var(--purple-light);
+      padding:16px;
+      color:var(--ink);
+      min-height:100vh;
+    }
+
+    button{
+      font-family:'Schoulschrëft', system-ui, sans-serif;
+      cursor:pointer;
+    }
+
+    /* TOP BAR (same as Kalenner) */
+    .top-bar{
+      max-width:1100px;
+      margin:0 auto 8px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      background:var(--purple-mid);
+      border-radius:999px;
+      padding:4px 10px;
+      color:var(--white);
+      gap:10px;
+    }
+    .top-bar-title{
+      font-size:1.05rem;
+      flex:1;
+      text-align:center;
+      min-height:1.4em;
+      opacity:.95;
+    }
+    .top-arrow{
+      width:28px;
+      height:28px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      border-radius:50%;
+      border:2px solid var(--white);
+      font-size:1.1rem;
+      background:transparent;
+      color:var(--white);
+    }
+    .top-arrow:disabled{
+      opacity:0.4;
+      cursor:default;
+    }
+
+    .subtitle{
+      max-width:1100px;
+      margin:0 auto 12px;
+      text-align:center;
+      font-size:0.9rem;
+      opacity:0.8;
+    }
+
+    .games{
+      max-width:1100px;
+      margin:0 auto;
+    }
+
+    .game{ display:none; }
+    .game.active{ display:block; }
+
+    h2{
+      font-size:1.1rem;
+      margin-bottom:6px;
+      text-align:center;
+      color:var(--purple-dark);
+    }
+
+    /* White rounded instruction box */
+    .instruction-box{
+      background:var(--white);
+      border-radius:18px;
+      padding:10px 14px;
+      text-align:center;
+      font-size:0.95rem;
+      margin:0 auto 12px;
+      border:2px solid rgba(108,74,163,.15);
+    }
+
+    .row-center{
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+      margin: 0 auto 12px;
+    }
+
+    .primary{
+      padding:6px 14px;
+      border-radius:999px;
+      border:2px solid var(--purple-dark);
+      background:var(--purple-mid);
+      color:var(--white);
+      font-size:0.9rem;
+    }
+    .secondary{
+      padding:4px 10px;
+      border-radius:999px;
+      border:2px solid var(--purple-mid);
+      background:white;
+      color:var(--ink);
+      font-size:0.85rem;
+    }
+
+    .pill{
+      background:var(--white);
+      border-radius:999px;
+      padding:6px 12px;
+      border:2px solid rgba(108,74,163,.15);
+      font-size:0.9rem;
+    }
+
+    /* Prompt boxes */
+    .prompt-wrap{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      align-items:center;
+      margin-top: 6px;
+    }
+
+    .big-box{
+      width:min(820px, 100%);
+      background:var(--white);
+      border-radius:18px;
+      padding:16px 16px;
+      border:2px solid rgba(108,74,163,.15);
+      text-align:center;
+    }
+
+    .person{
+      font-size:2.3rem;
+      color:var(--purple-dark);
+      line-height:1.1;
+    }
+
+    .inf{
+      font-size:2.1rem;
+      line-height:1.1;
+      margin-top: 6px;
+      color: var(--ink);
+    }
+
+    .hint{
+      font-size:1.0rem;
+      opacity:.78;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="top-bar">
+    <button class="top-arrow" id="prevBtn" aria-label="Viregt Spill" disabled>‹</button>
+    <div class="top-bar-title" id="topTitle"></div>
+    <button class="top-arrow" id="nextBtn" aria-label="Nächst Spill" disabled>›</button>
+  </div>
+
+  <div class="subtitle">P4 – Verben</div>
+
+  <div class="games">
+    <section class="game active" id="game1">
+      <h2>Konjugéieren (mëndlech)</h2>
+      <div class="instruction-box">
+        Kuck d’Infinitiv a konjugéier (mëndlech). Keng Kontroll.
+      </div>
+
+      <div class="row-center">
+        <button class="primary" id="btnNext">Nächst</button>
+        <button class="secondary" id="btnReset">Nei mixen</button>
+        <div class="pill" id="prog">1 / 105</div>
+      </div>
+
+      <div class="prompt-wrap">
+        <div class="big-box">
+          <div class="person" id="person">ech</div>
+          <div class="inf" id="verb">fueren</div>
+          <div class="hint">Soen de ganze Saz: <span style="color:var(--purple-dark)">„<span id="sentenceHint">ech …</span>“</span></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+<script>
+/* ===================== DATA ===================== */
+const verbs = {
+  irregular: ["fueren","danzen","liesen","schwammen","molen","lafen","maachen"],
+  regular: ["spillen","lauschteren","kucken","boxen","kachen","léieren","raschten","spadséieren","telefonéieren"]
+};
+
+const allVerbs = [...verbs.irregular, ...verbs.regular];
+
+const persons = [
+  { key:"ech", label:"ech" },
+  { key:"du", label:"du" },
+  { key:"hien", label:"hien" },
+  { key:"hatt", label:"hatt" },
+  { key:"mir", label:"mir" },
+  { key:"dir", label:"dir" },
+  { key:"si", label:"si" }
+];
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+/* Create all combinations (15 verbs * 7 persons = 105) */
+function buildDeck(){
+  const deck = [];
+  for(const v of allVerbs){
+    for(const p of persons){
+      deck.push({ verb:v, person:p.label });
+    }
+  }
+  return shuffle(deck);
+}
+
+let deck = buildDeck();
+let pos = 0;
+
+function render(){
+  const item = deck[pos];
+  document.getElementById("person").textContent = item.person;
+  document.getElementById("verb").textContent = item.verb;
+  document.getElementById("sentenceHint").textContent = `${item.person} …`;
+  document.getElementById("prog").textContent = `${pos+1} / ${deck.length}`;
+}
+
+function next(){
+  pos++;
+  if(pos >= deck.length){
+    // loop back + reshuffle to keep it fresh
+    deck = buildDeck();
+    pos = 0;
+  }
+  render();
+}
+
+document.getElementById("btnNext").addEventListener("click", next);
+document.getElementById("btnReset").addEventListener("click", ()=>{
+  deck = buildDeck();
+  pos = 0;
+  render();
+});
+
+// Keyboard support
+document.addEventListener("keydown", (e)=>{
+  if(e.key === " " || e.key === "Enter") next();
+});
+
+render();
+</script>
+
+</body>
+</html>
