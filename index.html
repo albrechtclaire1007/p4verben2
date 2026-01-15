@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>P4 – Verben (Konjugéieren)</title>
+  <title>P4 – Verben (Spiller)</title>
 
   <style>
     /* FONT */
@@ -36,12 +36,12 @@
       min-height:100vh;
     }
 
-    button{
+    button, input, select{
       font-family:'Schoulschrëft', system-ui, sans-serif;
       cursor:pointer;
     }
 
-    /* TOP BAR (same as Kalenner) */
+    /* TOP BAR */
     .top-bar{
       max-width:1100px;
       margin:0 auto 8px;
@@ -73,10 +73,6 @@
       background:transparent;
       color:var(--white);
     }
-    .top-arrow:disabled{
-      opacity:0.4;
-      cursor:default;
-    }
 
     .subtitle{
       max-width:1100px;
@@ -101,7 +97,6 @@
       color:var(--purple-dark);
     }
 
-    /* White rounded instruction box */
     .instruction-box{
       background:var(--white);
       border-radius:18px;
@@ -137,7 +132,6 @@
       color:var(--ink);
       font-size:0.85rem;
     }
-
     .pill{
       background:var(--white);
       border-radius:999px;
@@ -146,96 +140,512 @@
       font-size:0.9rem;
     }
 
-    /* Prompt boxes */
-    .prompt-wrap{
-      display:flex;
-      flex-direction:column;
-      gap:12px;
-      align-items:center;
-      margin-top: 6px;
+    .feedback{
+      margin-top:8px;
+      min-height:1.4em;
+      font-size:0.95rem;
+      text-align:center;
     }
+    .feedback.ok{ color:#117a3a; }
+    .feedback.bad{ color:#b02323; }
 
+    /* ===== Prompt box ===== */
     .big-box{
-      width:min(820px, 100%);
+      width:min(860px, 100%);
       background:var(--white);
       border-radius:18px;
       padding:16px 16px;
       border:2px solid rgba(108,74,163,.15);
       text-align:center;
+      margin: 0 auto;
     }
-
     .person{
-      font-size:2.3rem;
+      font-size:2.2rem;
       color:var(--purple-dark);
       line-height:1.1;
     }
-
     .inf{
-      font-size:2.1rem;
+      font-size:2.0rem;
       line-height:1.1;
       margin-top: 6px;
       color: var(--ink);
     }
 
-    .hint{
+    /* ===== Choice buttons ===== */
+    .choices{
+      display:flex;
+      justify-content:center;
+      gap:10px;
+      flex-wrap:wrap;
+      margin: 10px auto 0;
+    }
+    .choice{
+      padding:10px 14px;
+      border-radius:16px;
+      border:2px solid rgba(108,74,163,.18);
+      background:var(--white);
+      font-size:1.05rem;
+      min-width: 180px;
+    }
+    .choice:active{ transform: scale(.98); }
+
+    .flash-green{ animation: flashGreen .25s ease; }
+    .flash-red{ animation: flashRed .25s ease; }
+    @keyframes flashGreen{
+      0%{ box-shadow:none; }
+      50%{ box-shadow: 0 0 0 6px rgba(183,240,200,.95); }
+      100%{ box-shadow:none; }
+    }
+    @keyframes flashRed{
+      0%{ box-shadow:none; }
+      50%{ box-shadow: 0 0 0 6px rgba(255,204,204,.95); }
+      100%{ box-shadow:none; }
+    }
+
+    /* ===== Drag chips ===== */
+    .chips{
+      display:flex;
+      justify-content:center;
+      flex-wrap:wrap;
+      gap:8px;
+      margin: 8px auto 0;
+    }
+    .chip{
+      background:var(--purple-light);
+      border:2px solid rgba(108,74,163,.12);
+      border-radius:999px;
+      padding:8px 12px;
+      font-size:1.05rem;
+      user-select:none;
+      cursor:grab;
+    }
+    .chip:active{ transform: scale(.98); }
+    .chip.placed{ opacity:.45; cursor:default; }
+
+    .zones{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:12px;
+      margin-top: 12px;
+    }
+    @media(min-width:900px){
+      .zones{ grid-template-columns:1fr 1fr; }
+    }
+    .zone{
+      background:var(--white);
+      border-radius:18px;
+      border:2px solid rgba(108,74,163,.15);
+      padding:10px;
+      min-height:180px;
+    }
+    .zone h3{
+      text-align:center;
+      color:var(--purple-dark);
+      font-size:1.1rem;
+      margin-bottom:6px;
+    }
+    .zone p{
+      text-align:center;
+      opacity:.75;
+      margin-bottom:8px;
+      font-size:0.9rem;
+    }
+    .zone.over{
+      outline:4px solid rgba(108,74,163,.18);
+      outline-offset:2px;
+    }
+
+    /* ===== Mini table (fill red cells) ===== */
+    table{
+      width: min(860px, 100%);
+      margin: 0 auto;
+      border-collapse: collapse;
+      background: var(--white);
+      border-radius:18px;
+      overflow:hidden;
+      border:2px solid rgba(108,74,163,.15);
+    }
+    td, th{
+      border:1px solid rgba(108,74,163,.18);
+      padding:10px;
+      text-align:center;
+      font-size:1.05rem;
+    }
+    th{
+      background: rgba(183,162,229,.35);
+      color: var(--ink);
+    }
+    .cell-green{
+      background: rgba(183,240,200,.55);
+    }
+    .cell-red{
+      background: rgba(255,204,204,.35);
+    }
+    select{
+      padding:6px 8px;
+      border-radius:12px;
+      border:2px solid rgba(108,74,163,.18);
+      background: #fff;
       font-size:1.0rem;
-      opacity:.78;
-      margin-top: 10px;
+    }
+
+    /* ===== Memory grid ===== */
+    .mem-grid{
+      display:grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap:10px;
+      width: min(860px, 100%);
+      margin: 0 auto;
+    }
+    .mem-card{
+      height: 90px;
+      background: var(--white);
+      border-radius:18px;
+      border:2px solid rgba(108,74,163,.15);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      padding:8px;
+      font-size:1.05rem;
+      user-select:none;
+      cursor:pointer;
+      position:relative;
+    }
+    .mem-card.done{
+      background: rgba(183,240,200,.55);
+      cursor:default;
+      opacity:.85;
+    }
+    .mem-card.faceDown{
+      background: rgba(183,162,229,.22);
+      color: rgba(45,24,68,.25);
+    }
+
+    /* ===== Build from parts ===== */
+    .parts{
+      width:min(900px, 100%);
+      margin: 0 auto;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .partsRow{
+      background: var(--white);
+      border-radius:18px;
+      border:2px solid rgba(108,74,163,.15);
+      padding:10px;
+    }
+    .partsRowTitle{
+      text-align:center;
+      opacity:.85;
+      margin-bottom:8px;
+    }
+    .tiles{
+      display:flex;
+      justify-content:center;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+    .tile{
+      background: var(--purple-light);
+      border:2px solid rgba(108,74,163,.12);
+      border-radius:14px;
+      padding:8px 12px;
+      font-size:1.15rem;
+      user-select:none;
+      cursor:pointer;
+    }
+    .tile.selected{
+      outline:3px solid rgba(108,74,163,.25);
+      outline-offset:2px;
+    }
+    .resultBox{
+      width:min(860px, 100%);
+      margin: 10px auto 0;
+      background: var(--white);
+      border-radius:18px;
+      border:2px solid rgba(108,74,163,.15);
+      padding:12px;
+      text-align:center;
+      font-size:1.4rem;
+    }
+
+    /* Modal */
+    .overlay{
+      position:fixed;
+      inset:0;
+      background:rgba(45,24,68,.25);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:16px;
+    }
+    .overlay.show{ display:flex; }
+    .modal{
+      background:var(--white);
+      border-radius:18px;
+      border:2px solid rgba(108,74,163,.18);
+      width:min(520px, 100%);
+      padding:14px;
+      text-align:center;
+    }
+    .modal h3{
+      color:var(--purple-dark);
+      font-size:1.4rem;
+      margin-bottom:6px;
+    }
+    .modal p{
+      font-size:1.0rem;
+      margin-bottom:10px;
+      opacity:.9;
     }
   </style>
 </head>
 
 <body>
-
   <div class="top-bar">
-    <button class="top-arrow" id="prevBtn" aria-label="Viregt Spill" disabled>‹</button>
+    <button class="top-arrow" id="prevBtn" aria-label="Viregt Spill">‹</button>
     <div class="top-bar-title" id="topTitle"></div>
-    <button class="top-arrow" id="nextBtn" aria-label="Nächst Spill" disabled>›</button>
+    <button class="top-arrow" id="nextBtn" aria-label="Nächst Spill">›</button>
   </div>
 
-  <div class="subtitle">P4 – Verben</div>
+  <div class="subtitle">P4 – Verben (Konjugéieren)</div>
 
   <div class="games">
-    <section class="game active" id="game1">
+
+    <!-- G1 Oral -->
+    <section class="game active" id="g1">
       <h2>Konjugéieren (mëndlech)</h2>
-      <div class="instruction-box">
-        Kuck d’Infinitiv a konjugéier (mëndlech). Keng Kontroll.
-      </div>
-
+      <div class="instruction-box">Kuck d’Infinitiv + Persoun a konjugéier (mëndlech). Keng Kontroll.</div>
       <div class="row-center">
-        <button class="primary" id="btnNext">Nächst</button>
-        <button class="secondary" id="btnReset">Nei mixen</button>
-        <div class="pill" id="prog">1 / 105</div>
+        <button class="primary" id="g1Next">Nächst</button>
+        <button class="secondary" id="g1Mix">Nei mixen</button>
+        <div class="pill" id="g1Prog">1 / 105</div>
       </div>
-
-      <div class="prompt-wrap">
-        <div class="big-box">
-          <div class="person" id="person">ech</div>
-          <div class="inf" id="verb">fueren</div>
-          <div class="hint">Soen de ganze Saz: <span style="color:var(--purple-dark)">„<span id="sentenceHint">ech …</span>“</span></div>
-        </div>
+      <div class="big-box">
+        <div class="person" id="g1Person">ech</div>
+        <div class="inf" id="g1Verb">fueren</div>
       </div>
     </section>
+
+    <!-- G2 Stem oder Endung -->
+    <section class="game" id="g2">
+      <h2>Stamm oder Endung?</h2>
+      <div class="instruction-box">Wat ännert sech? Klick: Stamm oder Endung.</div>
+      <div class="row-center">
+        <button class="secondary" id="g2Mix">Nei mixen</button>
+        <div class="pill" id="g2Prog">1 / …</div>
+      </div>
+      <div class="big-box" id="g2Box">
+        <div class="person" id="g2Person">du</div>
+        <div class="inf" id="g2Verb">fueren</div>
+        <div class="choices">
+          <button class="choice" id="g2Stem">Stamm</button>
+          <button class="choice" id="g2End">Endung</button>
+        </div>
+      </div>
+      <div class="feedback" id="g2Fb"></div>
+    </section>
+
+    <!-- G3 MCQ -->
+    <section class="game" id="g3">
+      <h2>Richteg Form (3 Optiounen)</h2>
+      <div class="instruction-box">Wiel déi richteg konjugéiert Form.</div>
+      <div class="row-center">
+        <button class="secondary" id="g3Mix">Nei mixen</button>
+        <div class="pill" id="g3Prog">1 / …</div>
+      </div>
+      <div class="big-box" id="g3Box">
+        <div class="person" id="g3Person">dir</div>
+        <div class="inf" id="g3Verb">lafen</div>
+        <div class="choices" id="g3Choices"></div>
+      </div>
+      <div class="feedback" id="g3Fb"></div>
+    </section>
+
+    <!-- G4 Sort persons -->
+    <section class="game" id="g4">
+      <h2>Sortéier d’Persounen</h2>
+      <div class="instruction-box">Zéi d’Persounen: “Stamm ännert” oder “Stamm bleift”.</div>
+      <div class="row-center">
+        <button class="secondary" id="g4NextVerb">Nächst Verb</button>
+        <div class="pill" id="g4VerbLabel">fueren</div>
+      </div>
+
+      <div class="chips" id="g4Chips"></div>
+
+      <div class="zones">
+        <div class="zone" id="g4ZoneChange">
+          <h3>Stamm ännert</h3><p>Drop hei</p>
+          <div class="chips" id="g4PlacedChange"></div>
+        </div>
+        <div class="zone" id="g4ZoneSame">
+          <h3>Stamm bleift</h3><p>Drop hei</p>
+          <div class="chips" id="g4PlacedSame"></div>
+        </div>
+      </div>
+
+      <div class="feedback" id="g4Fb"></div>
+    </section>
+
+    <!-- G5 Fill red cells -->
+    <section class="game" id="g5">
+      <h2>Fëll d’rout Felder</h2>
+      <div class="instruction-box">Fëll just: du / hien-hatt / dir. Klick “Kontrolléieren”.</div>
+      <div class="row-center">
+        <button class="secondary" id="g5NextVerb">Nächst Verb</button>
+        <button class="primary" id="g5Check">Kontrolléieren</button>
+        <div class="pill" id="g5VerbLabel">fueren</div>
+      </div>
+
+      <table>
+        <thead>
+          <tr><th>Persoun</th><th>Form</th></tr>
+        </thead>
+        <tbody id="g5Body"></tbody>
+      </table>
+      <div class="feedback" id="g5Fb"></div>
+    </section>
+
+    <!-- G6 Memory -->
+    <section class="game" id="g6">
+      <h2>Memory (Persoun + Verb)</h2>
+      <div class="instruction-box">Fënn d’Puer: “du + fueren” ↔ “fier-s”.</div>
+      <div class="row-center">
+        <button class="secondary" id="g6Restart">Neistarten</button>
+        <div class="pill" id="g6Prog">0 / 12</div>
+      </div>
+      <div class="mem-grid" id="g6Grid"></div>
+      <div class="feedback" id="g6Fb"></div>
+    </section>
+
+    <!-- G7 Race -->
+    <section class="game" id="g7">
+      <h2>Konjugatiouns-Race</h2>
+      <div class="instruction-box">Soen et aus. Klick “Äntwert weisen” fir d’Léisung (wann néideg).</div>
+      <div class="row-center">
+        <button class="primary" id="g7Next">Nächst</button>
+        <button class="secondary" id="g7Show">Äntwert weisen</button>
+        <button class="secondary" id="g7Mix">Nei mixen</button>
+      </div>
+
+      <div class="big-box">
+        <div class="person" id="g7Person">hien/hatt</div>
+        <div class="inf" id="g7Verb">maachen</div>
+        <div class="feedback" id="g7Answer" style="font-size:1.6rem; margin-top:8px;"></div>
+      </div>
+    </section>
+
+    <!-- G8 Fix the mistake -->
+    <section class="game" id="g8">
+      <h2>Feeler verbesseren</h2>
+      <div class="instruction-box">Wiel déi richteg Form (dat anert ass falsch).</div>
+      <div class="row-center">
+        <button class="secondary" id="g8Mix">Nei mixen</button>
+        <div class="pill" id="g8Prog">1 / …</div>
+      </div>
+
+      <div class="big-box" id="g8Box" style="font-size:1.5rem;">
+        <div id="g8Sentence" style="margin-bottom:10px;"></div>
+        <div class="choices" id="g8Choices"></div>
+      </div>
+      <div class="feedback" id="g8Fb"></div>
+    </section>
+
+    <!-- G9 Build from parts -->
+    <section class="game" id="g9">
+      <h2>Bauen: Stamm + Endung</h2>
+      <div class="instruction-box">Wiel e Stamm an eng Endung. Du kanns probéieren (och falsch).</div>
+      <div class="row-center">
+        <button class="secondary" id="g9Mix">Nei mixen</button>
+        <button class="primary" id="g9Check">Kontrolléieren</button>
+        <div class="pill" id="g9Prog">1 / …</div>
+      </div>
+
+      <div class="big-box">
+        <div class="person" id="g9Person">du</div>
+        <div class="inf" id="g9Verb">fueren</div>
+      </div>
+
+      <div class="parts">
+        <div class="partsRow">
+          <div class="partsRowTitle">Stamm</div>
+          <div class="tiles" id="g9Stems"></div>
+        </div>
+        <div class="partsRow">
+          <div class="partsRowTitle">Endung</div>
+          <div class="tiles" id="g9Ends"></div>
+        </div>
+      </div>
+
+      <div class="resultBox" id="g9Result">—</div>
+      <div class="feedback" id="g9Fb"></div>
+    </section>
+
+  </div>
+
+  <div class="overlay" id="overlay">
+    <div class="modal">
+      <h3 id="modalTitle">Bravo!</h3>
+      <p id="modalText">Alles fäerdeg.</p>
+      <button class="primary" id="modalBtn">Weider</button>
+    </div>
   </div>
 
 <script>
-/* ===================== DATA ===================== */
-const verbs = {
-  irregular: ["fueren","danzen","liesen","schwammen","molen","lafen","maachen"],
-  regular: ["spillen","lauschteren","kucken","boxen","kachen","léieren","raschten","spadséieren","telefonéieren"]
+/* ===================== CONJUGATION DATA ===================== */
+const PERSONS = [
+  {k:"ech", label:"ech"},
+  {k:"du", label:"du"},
+  {k:"hienhatt", label:"hien/hatt"},
+  {k:"mir", label:"mir"},
+  {k:"dir", label:"dir"},
+  {k:"si", label:"si"}
+];
+
+// irregulars from your worksheet (explicit)
+const IRREG_EXPLICIT = {
+  "fueren":   { ech:"fueren", du:"fiers", hienhatt:"fiert", mir:"fueren", dir:"fuert", si:"fueren" },
+  "danzen":   { ech:"danzen", du:"danz",  hienhatt:"danzt", mir:"danzen", dir:"danzt", si:"danzen" },
+  "liesen":   { ech:"liesen", du:"lies",  hienhatt:"liest", mir:"liesen", dir:"liest", si:"liesen" },
+  "schwammen":{ ech:"schwammen", du:"schwëmms", hienhatt:"schwëmmt", mir:"schwammen", dir:"schwammt", si:"schwammen" },
+  "molen":    { ech:"molen", du:"mools", hienhatt:"moolt", mir:"molen", dir:"moolt", si:"molen" },
+  "lafen":    { ech:"lafen", du:"leefs", hienhatt:"leeft", mir:"lafen", dir:"laaft", si:"lafen" },
+  "maachen":  { ech:"maachen", du:"méchs", hienhatt:"mécht", mir:"maachen", dir:"maacht", si:"maachen" },
+  "spillen":  { ech:"spillen", du:"spills", hienhatt:"spillt", mir:"spillen", dir:"spillt", si:"spillen" }
 };
 
-const allVerbs = [...verbs.irregular, ...verbs.regular];
+// regulars (conjugate like spillen)
+const REGULAR = ["lauschteren","kucken","boxen","kachen","léieren","raschten","spadséieren","telefonéieren"];
+function stemOf(inf){
+  // remove trailing "en"
+  if(inf.endsWith("en")) return inf.slice(0,-2);
+  return inf;
+}
+function conjRegular(inf){
+  const st = stemOf(inf);
+  return {
+    ech: st + "en",
+    du: st + "s",
+    hienhatt: st + "t",
+    mir: st + "en",
+    dir: st + "t",
+    si: st + "en"
+  };
+}
 
-const persons = [
-  { key:"ech", label:"ech" },
-  { key:"du", label:"du" },
-  { key:"hien", label:"hien" },
-  { key:"hatt", label:"hatt" },
-  { key:"mir", label:"mir" },
-  { key:"dir", label:"dir" },
-  { key:"si", label:"si" }
-];
+// Build master verbs list with forms
+const VERBS = [];
+Object.keys(IRREG_EXPLICIT).forEach(v=>{
+  VERBS.push({inf:v, forms: IRREG_EXPLICIT[v], type: REGULAR.includes(v) ? "regular" : (v==="spillen" ? "regular" : "irregular")});
+});
+REGULAR.forEach(v=>{
+  VERBS.push({inf:v, forms: conjRegular(v), type:"regular"});
+});
+
+// stem-change verbs (from your worksheet red/green logic)
+const STEM_CHANGE = new Set(["fueren","schwammen","molen","lafen","maachen"]); // danzen/liesen treated as ending-only
 
 function shuffle(arr){
   const a = arr.slice();
@@ -246,52 +656,654 @@ function shuffle(arr){
   return a;
 }
 
-/* Create all combinations (15 verbs * 7 persons = 105) */
-function buildDeck(){
-  const deck = [];
-  for(const v of allVerbs){
-    for(const p of persons){
-      deck.push({ verb:v, person:p.label });
+function randInt(n){ return Math.floor(Math.random()*n); }
+function pick(arr){ return arr[randInt(arr.length)]; }
+
+function flash(el, cls){
+  el.classList.remove("flash-green","flash-red");
+  void el.offsetWidth;
+  el.classList.add(cls);
+}
+function setFb(id, text, ok){
+  const el = document.getElementById(id);
+  el.textContent = text;
+  el.className = "feedback " + (ok ? "ok" : "bad");
+}
+function clearFb(id){
+  const el = document.getElementById(id);
+  el.textContent = "";
+  el.className = "feedback";
+}
+
+/* ===================== MODAL ===================== */
+const overlay = document.getElementById("overlay");
+function showModal(title, text, onClick){
+  document.getElementById("modalTitle").textContent = title;
+  document.getElementById("modalText").textContent = text;
+  overlay.classList.add("show");
+  document.getElementById("modalBtn").onclick = ()=>{
+    overlay.classList.remove("show");
+    onClick && onClick();
+  };
+}
+
+/* ===================== NAV ===================== */
+const gameEls = Array.from(document.querySelectorAll(".game"));
+let gameIndex = 0;
+
+function showGame(idx){
+  gameEls.forEach((g,i)=>g.classList.toggle("active", i===idx));
+  gameIndex = idx;
+  // arrows only feel
+  document.getElementById("topTitle").textContent = "";
+  // render each
+  if(idx===0) g1Render();
+  if(idx===1) g2Render();
+  if(idx===2) g3Render();
+  if(idx===3) g4Render();
+  if(idx===4) g5Render();
+  if(idx===5) g6Render();
+  if(idx===6) g7Render(true);
+  if(idx===7) g8Render();
+  if(idx===8) g9Render();
+}
+
+document.getElementById("prevBtn").addEventListener("click", ()=>{
+  showGame((gameIndex + gameEls.length - 1) % gameEls.length);
+});
+document.getElementById("nextBtn").addEventListener("click", ()=>{
+  showGame((gameIndex + 1) % gameEls.length);
+});
+
+/* ===================== HELPERS: correct form + change type ===================== */
+function getVerb(inf){ return VERBS.find(v=>v.inf===inf); }
+function correctForm(inf, personKey){
+  const v = getVerb(inf);
+  return v.forms[personKey];
+}
+
+function changeType(inf, personKey){
+  // only asked stem vs ending. If stem-change verb and person is du/hienhatt/dir => Stamm else Endung
+  if(STEM_CHANGE.has(inf) && (personKey==="du" || personKey==="hienhatt" || personKey==="dir")){
+    return "stamm";
+  }
+  return "endung";
+}
+
+function personLabel(k){
+  return PERSONS.find(p=>p.k===k).label;
+}
+
+/* ===================== DECKS (common) ===================== */
+function buildPersonVerbDeck(){
+  const deck=[];
+  for(const v of VERBS){
+    for(const p of PERSONS){
+      deck.push({inf:v.inf, personKey:p.k});
     }
   }
   return shuffle(deck);
 }
 
-let deck = buildDeck();
-let pos = 0;
+/* ===================== G1 Oral ===================== */
+let g1Deck = buildPersonVerbDeck();
+let g1Pos = 0;
 
-function render(){
-  const item = deck[pos];
-  document.getElementById("person").textContent = item.person;
-  document.getElementById("verb").textContent = item.verb;
-  document.getElementById("sentenceHint").textContent = `${item.person} …`;
-  document.getElementById("prog").textContent = `${pos+1} / ${deck.length}`;
+function g1Render(){
+  document.getElementById("g1Prog").textContent = `${g1Pos+1} / ${g1Deck.length}`;
+  const item = g1Deck[g1Pos];
+  document.getElementById("g1Person").textContent = personLabel(item.personKey);
+  document.getElementById("g1Verb").textContent = item.inf;
 }
 
-function next(){
-  pos++;
-  if(pos >= deck.length){
-    // loop back + reshuffle to keep it fresh
-    deck = buildDeck();
-    pos = 0;
+document.getElementById("g1Next").addEventListener("click", ()=>{
+  g1Pos++;
+  if(g1Pos>=g1Deck.length){ g1Deck = buildPersonVerbDeck(); g1Pos=0; }
+  g1Render();
+});
+document.getElementById("g1Mix").addEventListener("click", ()=>{
+  g1Deck = buildPersonVerbDeck();
+  g1Pos=0;
+  g1Render();
+});
+
+/* ===================== G2 Stem oder Endung ===================== */
+let g2Deck = buildPersonVerbDeck();
+let g2Pos = 0;
+
+function g2Render(){
+  clearFb("g2Fb");
+  const item = g2Deck[g2Pos];
+  document.getElementById("g2Prog").textContent = `${g2Pos+1} / ${g2Deck.length}`;
+  document.getElementById("g2Person").textContent = personLabel(item.personKey);
+  document.getElementById("g2Verb").textContent = item.inf;
+
+  const expected = changeType(item.inf, item.personKey); // "stamm"|"endung"
+
+  document.getElementById("g2Stem").onclick = ()=>{
+    const ok = expected==="stamm";
+    flash(document.getElementById("g2Box"), ok ? "flash-green" : "flash-red");
+    setFb("g2Fb", ok ? "Richteg!" : "Nee.", ok);
+    setTimeout(()=>{ g2Pos = (g2Pos+1)%g2Deck.length; g2Render(); }, 450);
+  };
+  document.getElementById("g2End").onclick = ()=>{
+    const ok = expected==="endung";
+    flash(document.getElementById("g2Box"), ok ? "flash-green" : "flash-red");
+    setFb("g2Fb", ok ? "Richteg!" : "Nee.", ok);
+    setTimeout(()=>{ g2Pos = (g2Pos+1)%g2Deck.length; g2Render(); }, 450);
+  };
+}
+
+document.getElementById("g2Mix").addEventListener("click", ()=>{
+  g2Deck = buildPersonVerbDeck();
+  g2Pos=0;
+  g2Render();
+});
+
+/* ===================== G3 MCQ 3 options ===================== */
+let g3Deck = buildPersonVerbDeck();
+let g3Pos = 0;
+
+function makeEndingMistake(form){
+  // common ending swaps
+  if(form.endsWith("en")) return form.slice(0,-2) + "t";
+  if(form.endsWith("t")) return form.slice(0,-1) + "en";
+  if(form.endsWith("s")) return form.slice(0,-1) + "t";
+  return form + "t";
+}
+function makeStemMistake(inf, personKey){
+  // for stem-change verbs, use the non-changed stem version for du/hienhatt/dir
+  const v = getVerb(inf);
+  const correct = v.forms[personKey];
+
+  if(STEM_CHANGE.has(inf) && (personKey==="du"||personKey==="hienhatt"||personKey==="dir")){
+    // use ech-stem (take ech form and then apply expected ending)
+    const echForm = v.forms["ech"]; // e.g. "fueren"
+    const echStem = stemOf(echForm); // rough
+    const ending = personKey==="du" ? "s" : (personKey==="hienhatt"||personKey==="dir" ? "t" : "en");
+    // but irregular endings for these verbs match worksheet (-s/-t). Use that.
+    return echStem + ending; // e.g. "fuers" (wrong) or "lafs" (wrong)
   }
-  render();
+
+  // for non stem-change: produce a plausible wrong by swapping person’s ending
+  return makeEndingMistake(correct);
 }
 
-document.getElementById("btnNext").addEventListener("click", next);
-document.getElementById("btnReset").addEventListener("click", ()=>{
-  deck = buildDeck();
-  pos = 0;
-  render();
+function g3Render(){
+  clearFb("g3Fb");
+  const item = g3Deck[g3Pos];
+  document.getElementById("g3Prog").textContent = `${g3Pos+1} / ${g3Deck.length}`;
+  document.getElementById("g3Person").textContent = personLabel(item.personKey);
+  document.getElementById("g3Verb").textContent = item.inf;
+
+  const correct = correctForm(item.inf, item.personKey);
+
+  let d1 = makeEndingMistake(correct);
+  let d2 = makeStemMistake(item.inf, item.personKey);
+
+  // ensure unique
+  const seen = new Set([correct]);
+  if(seen.has(d1)) d1 = d1 + " ";
+  seen.add(d1);
+  if(seen.has(d2)) d2 = d2 + " ";
+  const options = shuffle([correct, d1, d2]);
+
+  const wrap = document.getElementById("g3Choices");
+  wrap.innerHTML = "";
+  options.forEach(opt=>{
+    const btn = document.createElement("button");
+    btn.className = "choice";
+    btn.textContent = opt;
+    btn.onclick = ()=>{
+      const ok = opt===correct;
+      flash(document.getElementById("g3Box"), ok ? "flash-green" : "flash-red");
+      setFb("g3Fb", ok ? "Richteg!" : "Nee.", ok);
+      setTimeout(()=>{ g3Pos=(g3Pos+1)%g3Deck.length; g3Render(); }, 520);
+    };
+    wrap.appendChild(btn);
+  });
+}
+
+document.getElementById("g3Mix").addEventListener("click", ()=>{
+  g3Deck = buildPersonVerbDeck();
+  g3Pos=0;
+  g3Render();
 });
 
-// Keyboard support
-document.addEventListener("keydown", (e)=>{
-  if(e.key === " " || e.key === "Enter") next();
+/* ===================== G4 Sort persons: stem changes vs same ===================== */
+let g4Verb = "fueren";
+
+function g4Render(){
+  clearFb("g4Fb");
+  document.getElementById("g4VerbLabel").textContent = g4Verb;
+
+  const chips = document.getElementById("g4Chips");
+  const placedC = document.getElementById("g4PlacedChange");
+  const placedS = document.getElementById("g4PlacedSame");
+  chips.innerHTML = "";
+  placedC.innerHTML = "";
+  placedS.innerHTML = "";
+
+  const personsForGame = ["ech","du","hienhatt","mir","dir","si"];
+  personsForGame.forEach(pk=>{
+    const c = document.createElement("div");
+    c.className = "chip";
+    c.textContent = personLabel(pk);
+    c.draggable = true;
+    c.dataset.pk = pk;
+    c.addEventListener("dragstart", (e)=>{
+      e.dataTransfer.setData("text/plain", pk);
+    });
+    chips.appendChild(c);
+  });
+
+  const zoneChange = document.getElementById("g4ZoneChange");
+  const zoneSame = document.getElementById("g4ZoneSame");
+
+  function setOver(el, over){ el.classList.toggle("over", over); }
+
+  [zoneChange, zoneSame].forEach(zone=>{
+    zone.ondragover = (e)=>{ e.preventDefault(); setOver(zone,true); };
+    zone.ondragleave = ()=> setOver(zone,false);
+    zone.ondrop = (e)=>{
+      e.preventDefault(); setOver(zone,false);
+      const pk = e.dataTransfer.getData("text/plain");
+      if(!pk) return;
+
+      // find chip in source (if still there)
+      const chipEl = Array.from(document.querySelectorAll("#g4Chips .chip")).find(x=>x.dataset.pk===pk);
+      if(!chipEl) return;
+
+      const expected = (STEM_CHANGE.has(g4Verb) && (pk==="du"||pk==="hienhatt"||pk==="dir")) ? "change" : "same";
+      const droppedTo = (zone.id==="g4ZoneChange") ? "change" : "same";
+
+      if(expected===droppedTo){
+        chipEl.classList.add("placed");
+        (droppedTo==="change" ? placedC : placedS).appendChild(chipEl);
+        setFb("g4Fb","Richteg!", true);
+      }else{
+        flash(zone, "flash-red");
+        setFb("g4Fb","Nee.", false);
+      }
+
+      // completion check
+      const remaining = document.querySelectorAll("#g4Chips .chip").length;
+      if(remaining===0){
+        showModal("Bravo!", "Alles sortéiert!", ()=>{});
+      }
+    };
+  });
+}
+
+document.getElementById("g4NextVerb").addEventListener("click", ()=>{
+  // choose a verb where this makes sense (irregular + regular also ok)
+  g4Verb = pick(VERBS).inf;
+  g4Render();
 });
 
-render();
+/* ===================== G5 Fill red cells ===================== */
+let g5Verb = "fueren";
+
+function g5Render(){
+  clearFb("g5Fb");
+  document.getElementById("g5VerbLabel").textContent = g5Verb;
+
+  const v = getVerb(g5Verb);
+  const body = document.getElementById("g5Body");
+  body.innerHTML = "";
+
+  // show all persons; only du/hienhatt/dir are dropdowns; others are green filled
+  const order = ["ech","du","hienhatt","mir","dir","si"];
+  order.forEach(pk=>{
+    const tr = document.createElement("tr");
+    const tdP = document.createElement("td");
+    tdP.textContent = personLabel(pk);
+    const tdF = document.createElement("td");
+
+    if(pk==="du" || pk==="hienhatt" || pk==="dir"){
+      tdF.className = "cell-red";
+      const sel = document.createElement("select");
+      sel.dataset.pk = pk;
+
+      // options: correct + 2 plausible wrong
+      const corr = v.forms[pk];
+      const wrong1 = makeEndingMistake(corr);
+      const wrong2 = makeStemMistake(v.inf, pk);
+      const opts = shuffle([corr, wrong1, wrong2]).map(x=>String(x));
+
+      opts.forEach(o=>{
+        const op = document.createElement("option");
+        op.value = o;
+        op.textContent = o;
+        sel.appendChild(op);
+      });
+
+      tdF.appendChild(sel);
+    }else{
+      tdF.className = "cell-green";
+      tdF.textContent = v.forms[pk];
+    }
+
+    tr.appendChild(tdP);
+    tr.appendChild(tdF);
+    body.appendChild(tr);
+  });
+}
+
+document.getElementById("g5Check").addEventListener("click", ()=>{
+  const v = getVerb(g5Verb);
+  const selects = Array.from(document.querySelectorAll("#g5Body select"));
+  let okCount = 0;
+  selects.forEach(sel=>{
+    const pk = sel.dataset.pk;
+    const ok = sel.value === v.forms[pk];
+    sel.style.outline = ok ? "3px solid rgba(17,122,58,.35)" : "3px solid rgba(176,35,35,.35)";
+    okCount += ok ? 1 : 0;
+  });
+
+  if(okCount===3){
+    setFb("g5Fb","Alles richteg!", true);
+    setTimeout(()=>{
+      g5Verb = pick(VERBS).inf;
+      g5Render();
+    }, 650);
+  }else{
+    setFb("g5Fb","Nach net ganz. Probéier nach eng Kéier.", false);
+  }
+});
+
+document.getElementById("g5NextVerb").addEventListener("click", ()=>{
+  g5Verb = pick(VERBS).inf;
+  g5Render();
+});
+
+/* ===================== G6 Memory ===================== */
+let g6Cards = [];
+let g6First = null;
+let g6Lock = false;
+let g6DonePairs = 0;
+
+function buildMemory(){
+  // pick 6 random pairs (person+verb) <-> (form)
+  const pairs = [];
+  const deck = buildPersonVerbDeck();
+  for(const it of deck){
+    const pLabel = personLabel(it.personKey);
+    const left = `${pLabel} + ${it.inf}`;
+    const right = correctForm(it.inf, it.personKey);
+    // avoid duplicate right/left too much
+    pairs.push({id: `${it.inf}-${it.personKey}`, left, right});
+    if(pairs.length>=6) break;
+  }
+
+  const cards = [];
+  pairs.forEach((p,i)=>{
+    cards.push({key: p.id, text: p.left, pair: p.id, faceDown:true, done:false});
+    cards.push({key: p.id+"-r", text: p.right, pair: p.id, faceDown:true, done:false});
+  });
+
+  return shuffle(cards);
+}
+
+function g6Render(){
+  document.getElementById("g6Fb").textContent = "";
+  document.getElementById("g6Fb").className = "feedback";
+  g6Cards = buildMemory();
+  g6First = null;
+  g6Lock = false;
+  g6DonePairs = 0;
+  document.getElementById("g6Prog").textContent = `${g6DonePairs} / 6`;
+
+  const grid = document.getElementById("g6Grid");
+  grid.innerHTML = "";
+
+  g6Cards.forEach((c, idx)=>{
+    const el = document.createElement("div");
+    el.className = "mem-card faceDown";
+    el.dataset.idx = idx;
+    el.textContent = "•••";
+
+    el.onclick = ()=>{
+      if(g6Lock) return;
+      const card = g6Cards[idx];
+      if(card.done) return;
+      if(!card.faceDown) return;
+
+      card.faceDown = false;
+      el.classList.remove("faceDown");
+      el.textContent = card.text;
+
+      if(!g6First){
+        g6First = idx;
+        return;
+      }
+
+      // second card
+      g6Lock = true;
+      const first = g6Cards[g6First];
+
+      const firstEl = grid.querySelector(`.mem-card[data-idx="${g6First}"]`);
+
+      if(first.pair === card.pair){
+        // match
+        first.done = true; card.done = true;
+        firstEl.classList.add("done");
+        el.classList.add("done");
+        g6DonePairs++;
+        document.getElementById("g6Prog").textContent = `${g6DonePairs} / 6`;
+        setFb("g6Fb","Richteg!", true);
+
+        setTimeout(()=>{
+          g6First = null;
+          g6Lock = false;
+          if(g6DonePairs===6){
+            showModal("Bravo!", "Alles fonnt!", ()=>{ g6Render(); });
+          }
+        }, 420);
+      }else{
+        // no match
+        setFb("g6Fb","Nee.", false);
+        setTimeout(()=>{
+          // flip back
+          first.faceDown = true;
+          card.faceDown = true;
+          firstEl.classList.add("faceDown");
+          el.classList.add("faceDown");
+          firstEl.textContent = "•••";
+          el.textContent = "•••";
+          g6First = null;
+          g6Lock = false;
+        }, 650);
+      }
+    };
+
+    grid.appendChild(el);
+  });
+}
+document.getElementById("g6Restart").addEventListener("click", g6Render);
+
+/* ===================== G7 Race ===================== */
+let g7Deck = buildPersonVerbDeck();
+let g7Pos = 0;
+let g7ShowAnswer = false;
+
+function g7Render(resetAnswer){
+  if(resetAnswer){ g7ShowAnswer = false; document.getElementById("g7Answer").textContent = ""; document.getElementById("g7Answer").className="feedback"; }
+  const item = g7Deck[g7Pos];
+  document.getElementById("g7Person").textContent = personLabel(item.personKey);
+  document.getElementById("g7Verb").textContent = item.inf;
+}
+document.getElementById("g7Next").addEventListener("click", ()=>{
+  g7Pos++;
+  if(g7Pos>=g7Deck.length){ g7Deck = buildPersonVerbDeck(); g7Pos=0; }
+  g7Render(true);
+});
+document.getElementById("g7Mix").addEventListener("click", ()=>{
+  g7Deck = buildPersonVerbDeck(); g7Pos=0; g7Render(true);
+});
+document.getElementById("g7Show").addEventListener("click", ()=>{
+  const item = g7Deck[g7Pos];
+  document.getElementById("g7Answer").textContent = correctForm(item.inf, item.personKey);
+  document.getElementById("g7Answer").className = "feedback ok";
+});
+
+/* ===================== G8 Fix mistake ===================== */
+let g8Deck = buildPersonVerbDeck();
+let g8Pos = 0;
+
+function makeWrongForm(inf, pk){
+  // common wrong: correct ending but wrong stem OR correct stem wrong ending
+  const corr = correctForm(inf, pk);
+  const wrongA = makeEndingMistake(corr);
+  const wrongB = makeStemMistake(inf, pk);
+  return shuffle([wrongA, wrongB])[0];
+}
+
+function g8Render(){
+  clearFb("g8Fb");
+  const item = g8Deck[g8Pos];
+  document.getElementById("g8Prog").textContent = `${g8Pos+1} / ${g8Deck.length}`;
+
+  const pLab = personLabel(item.personKey);
+  const corr = correctForm(item.inf, item.personKey);
+  const wrong = makeWrongForm(item.inf, item.personKey);
+
+  // sentence shown contains WRONG form (to “fix”)
+  document.getElementById("g8Sentence").textContent = `${pLab} ${wrong}.`;
+
+  const choices = shuffle([corr, wrong]);
+  const wrap = document.getElementById("g8Choices");
+  wrap.innerHTML = "";
+  choices.forEach(opt=>{
+    const btn = document.createElement("button");
+    btn.className = "choice";
+    btn.textContent = `${pLab} ${opt}.`;
+    btn.onclick = ()=>{
+      const ok = opt===corr;
+      flash(document.getElementById("g8Box"), ok ? "flash-green" : "flash-red");
+      setFb("g8Fb", ok ? "Richteg!" : "Nee.", ok);
+      setTimeout(()=>{ g8Pos=(g8Pos+1)%g8Deck.length; g8Render(); }, 650);
+    };
+    wrap.appendChild(btn);
+  });
+}
+
+document.getElementById("g8Mix").addEventListener("click", ()=>{
+  g8Deck = buildPersonVerbDeck();
+  g8Pos=0;
+  g8Render();
+});
+
+/* ===================== G9 Build from parts ===================== */
+let g9Deck = buildPersonVerbDeck();
+let g9Pos = 0;
+let g9SelStem = null;
+let g9SelEnd = null;
+
+function splitStemEnd(inf, pk){
+  const corr = correctForm(inf, pk);
+  // crude split based on typical endings: en / s / t / (no ending)
+  if(corr.endsWith("en")) return {stem: corr.slice(0,-2), end:"en"};
+  if(corr.endsWith("s")) return {stem: corr.slice(0,-1), end:"s"};
+  if(corr.endsWith("t")) return {stem: corr.slice(0,-1), end:"t"};
+  return {stem: corr, end:""}; // e.g. danz, lies
+}
+
+function g9Render(){
+  clearFb("g9Fb");
+  g9SelStem = null; g9SelEnd = null;
+  document.getElementById("g9Result").textContent = "—";
+
+  const item = g9Deck[g9Pos];
+  document.getElementById("g9Prog").textContent = `${g9Pos+1} / ${g9Deck.length}`;
+  document.getElementById("g9Person").textContent = personLabel(item.personKey);
+  document.getElementById("g9Verb").textContent = item.inf;
+
+  const corr = correctForm(item.inf, item.personKey);
+  const parts = splitStemEnd(item.inf, item.personKey);
+
+  // stems options: correct + 2 plausible
+  let stemA = parts.stem;
+  let stemB = stemOf(correctForm(item.inf,"ech")); // ech stem
+  let stemC = stemOf(item.inf); // infinitive stem
+
+  // make unique
+  const stems = shuffle(Array.from(new Set([stemA, stemB, stemC])).slice(0,3));
+  while(stems.length<3) stems.push(stemA + ""); // fallback
+
+  // endings options
+  const ends = shuffle(Array.from(new Set([parts.end, "en", "t", "s", ""]))).slice(0,4);
+  // ensure correct end included
+  if(!ends.includes(parts.end)) ends[0]=parts.end;
+
+  const stemWrap = document.getElementById("g9Stems");
+  const endWrap = document.getElementById("g9Ends");
+  stemWrap.innerHTML = "";
+  endWrap.innerHTML = "";
+
+  function updateResult(){
+    if(g9SelStem===null || g9SelEnd===null) return;
+    const res = g9SelStem + g9SelEnd;
+    document.getElementById("g9Result").textContent = res;
+  }
+
+  stems.forEach(s=>{
+    const t = document.createElement("div");
+    t.className = "tile";
+    t.textContent = s;
+    t.onclick = ()=>{
+      Array.from(stemWrap.querySelectorAll(".tile")).forEach(x=>x.classList.remove("selected"));
+      t.classList.add("selected");
+      g9SelStem = s;
+      updateResult();
+    };
+    stemWrap.appendChild(t);
+  });
+
+  ends.forEach(e=>{
+    const t = document.createElement("div");
+    t.className = "tile";
+    t.textContent = e==="" ? "∅" : ("-" + e);
+    t.dataset.end = e;
+    t.onclick = ()=>{
+      Array.from(endWrap.querySelectorAll(".tile")).forEach(x=>x.classList.remove("selected"));
+      t.classList.add("selected");
+      g9SelEnd = e;
+      updateResult();
+    };
+    endWrap.appendChild(t);
+  });
+
+  document.getElementById("g9Check").onclick = ()=>{
+    if(g9SelStem===null || g9SelEnd===null){
+      setFb("g9Fb","Wiel e Stamm an eng Endung.", false);
+      return;
+    }
+    const attempt = g9SelStem + g9SelEnd;
+    const ok = attempt === corr;
+    setFb("g9Fb", ok ? "Richteg!" : `Nee. Richteg ass: ${corr}`, ok);
+    setTimeout(()=>{
+      g9Pos=(g9Pos+1)%g9Deck.length;
+      g9Render();
+    }, ok ? 650 : 1100);
+  };
+}
+
+document.getElementById("g9Mix").addEventListener("click", ()=>{
+  g9Deck = buildPersonVerbDeck();
+  g9Pos=0;
+  g9Render();
+});
+
+/* ===================== INIT ===================== */
+showGame(0);
+
+// ensure first loads correctly when switching
+function initAllOnce(){
+  g2Render(); g3Render(); g4Render(); g5Verb = "fueren"; g5Render(); g6Render(); g7Deck=buildPersonVerbDeck(); g7Pos=0; g7Render(true); g8Render(); g9Render();
+}
+// We don't call initAllOnce() immediately to avoid unnecessary work; each game renders on demand.
 </script>
-
 </body>
 </html>
+
