@@ -1174,212 +1174,33 @@ document.getElementById("g8Mix").addEventListener("click", ()=>{
   g8Render();
 });
 
-/* ===================== Inversion – gär ===================== */
-/*
-Slots:
-1 = Verb (conjugated)
-2 = Person (du/hien/hatt/dir)
-3 = gär (net gär becomes gär when dropped)
-4 = Information (optional)
-*/
+<section class="game" id="gInv">
+  <h2>Sazstruktur – gär</h2>
 
-const INV_PERSONS = ["du","hien","hatt","dir"];
-const INV_EXAMPLES = [
-  { verb:"schwammen", info:null },
-  { verb:"spillen", info:"Fussball" },
-  { verb:"liesen", info:null },
-  { verb:"kucken", info:"Tëlee" },
-  { verb:"danzen", info:null },
-  { verb:"lauschteren", info:"Musek" }
-];
+  <div class="instruction-box">
+    Zéi d’Wierder aus dem Saz an déi richteg Këschten (1–4).
+  </div>
 
-let invOrder = shuffle(INV_EXAMPLES);
-let invPos = 0;
+  <div class="row-center">
+    <button class="secondary" id="invReset">Reset</button>
+    <button class="primary" id="invNext">Nächst Beispill</button>
+    <div class="pill" id="invProg">1 / …</div>
+  </div>
 
-let invChosen = null;
-let invState = { verbInf:null, person:null, gar:null, info:null };
+  <!-- Sentence bank (already in correct order) -->
+  <div class="sent-bank" id="sentBank"></div>
 
-function invSetSlot(slotEl, type, text){
-  slotEl.classList.add("filled");
-  slotEl.innerHTML = `<span class="inv-chip ${type}">${text}</span>`;
-}
-function invResetSlots(){
-  invState = { verbInf:null, person:null, gar:null, info:null };
-  ["invSlot1","invSlot2","invSlot3","invSlot4"].forEach((id)=>{
-    const el = document.getElementById(id);
-    el.classList.remove("filled","over","flash-green","flash-red");
-    el.textContent = el.dataset.slot;
-    el.dataset.type = "";
-  });
-  clearFb("invFeedback");
-}
+  <!-- Drop slots -->
+  <div class="sent-slots" id="sentSlots">
+    <div class="sent-slot" data-slot="1" data-accept="subj">1</div>
+    <div class="sent-slot" data-slot="2" data-accept="verb">2</div>
+    <div class="sent-slot" data-slot="3" data-accept="gar">3</div>
+    <div class="sent-slot" data-slot="4" data-accept="info">4</div>
+  </div>
 
-function invMakeTile(text, cls, type){
-  const d = document.createElement("div");
-  d.className = `drag ${cls}`;
-  d.textContent = text;
-  d.draggable = true;
-  d.dataset.type = type;
-  d.dataset.value = text;
-  d.addEventListener("dragstart", (e)=>{
-    e.dataTransfer.setData("text/plain", JSON.stringify({type, value:text}));
-  });
-  return d;
-}
+  <div class="feedback" id="invFeedback"></div>
+</section>
 
-function invConjugate(inf, personLabel){
-  // use existing data where possible, with mapping person->personKey
-  const mapPersonKey = { "du":"du", "hien":"hienhatt", "hatt":"hienhatt", "dir":"dir" };
-
-  // if verb exists in VERBS list:
-  const v = getVerb(inf);
-  if(v){
-    const pk = mapPersonKey[personLabel];
-    return v.forms[pk];
-  }
-
-  // fallback (shouldn't happen)
-  return inf;
-}
-
-function invLoad(){
-  invChosen = invOrder[invPos];
-  document.getElementById("invProg").textContent = `${invPos+1} / ${invOrder.length}`;
-
-  const bank = document.getElementById("invBank");
-  bank.innerHTML = "";
-  invResetSlots();
-
-  // Tiles (top bank)
-  bank.appendChild(invMakeTile(invChosen.verb, "verb", "verb"));
-  INV_PERSONS.forEach(p=> bank.appendChild(invMakeTile(p, "person", "person")));
-  bank.appendChild(invMakeTile("gär", "gar", "gar"));
-  bank.appendChild(invMakeTile("net gär", "gar", "gar"));
-  if(invChosen.info) bank.appendChild(invMakeTile(invChosen.info, "info", "info"));
-}
-
-function invTryUpdateConjugatedVerb(){
-  // If verb + person are both set, update slot1 with conjugated form
-  if(invState.verbInf && invState.person){
-    const slot1 = document.getElementById("invSlot1");
-    const conj = invConjugate(invState.verbInf, invState.person);
-    invSetSlot(slot1, "verb", conj);
-    slot1.dataset.type = "verb";
-  }
-}
-
-function invCheck(){
-  // must have verb, person, gar. info required only if example has it.
-  if(!invState.verbInf || !invState.person || !invState.gar) return;
-  if(invChosen.info && !invState.info) return;
-
-  // verify verb in slot1 is correct conjugation
-  const conj = invConjugate(invState.verbInf, invState.person);
-
-  const slot1Text = document.getElementById("invSlot1").textContent.trim();
-  const slot2Text = document.getElementById("invSlot2").textContent.trim();
-  const slot3Text = document.getElementById("invSlot3").textContent.trim();
-  const slot4Text = document.getElementById("invSlot4").textContent.trim();
-
-  const okVerb = slot1Text === conj;
-  const okPerson = slot2Text === invState.person;
-  const okGar = slot3Text === "gär";
-  const okInfo = !invChosen.info || slot4Text === invChosen.info;
-
-  const ok = okVerb && okPerson && okGar && okInfo;
-
-  const slots = [document.getElementById("invSlot1"),document.getElementById("invSlot2"),document.getElementById("invSlot3"),document.getElementById("invSlot4")];
-  slots.forEach(s=>{
-    s.classList.remove("flash-green","flash-red");
-    void s.offsetWidth;
-    s.classList.add(ok ? "flash-green" : "flash-red");
-  });
-
-  setFb("invFeedback", ok ? "Richteg!" : "Nach eng Kéier.", ok);
-
-  if(ok){
-    setTimeout(()=>{
-      invPos++;
-      if(invPos >= invOrder.length){
-        showModal("Bravo!", "Alles fäerdeg!", ()=>{
-          invOrder = shuffle(INV_EXAMPLES);
-          invPos = 0;
-          invLoad();
-        });
-      }else{
-        invLoad();
-      }
-    }, 750);
-  }
-}
-
-function invWireSlots(){
-  document.querySelectorAll(".inv-slot").forEach(slot=>{
-    slot.addEventListener("dragover", (e)=>{ e.preventDefault(); slot.classList.add("over"); });
-    slot.addEventListener("dragleave", ()=> slot.classList.remove("over"));
-    slot.addEventListener("drop", (e)=>{
-      e.preventDefault();
-      slot.classList.remove("over");
-
-      const data = JSON.parse(e.dataTransfer.getData("text/plain"));
-      const sNum = slot.dataset.slot;
-
-      // basic slot-type expectations:
-      // 1 verb, 2 person, 3 gar, 4 info (optional)
-      if(sNum==="1" && data.type!=="verb"){ flash(slot,"flash-red"); return; }
-      if(sNum==="2" && data.type!=="person"){ flash(slot,"flash-red"); return; }
-      if(sNum==="3" && data.type!=="gar"){ flash(slot,"flash-red"); return; }
-      if(sNum==="4" && data.type!=="info"){ flash(slot,"flash-red"); return; }
-
-      // Place
-      if(sNum==="1"){
-        invState.verbInf = data.value;
-        invSetSlot(slot, "verb", data.value); // will be updated after person drop
-        slot.dataset.type = "verb";
-        invTryUpdateConjugatedVerb();
-      }
-      if(sNum==="2"){
-        invState.person = data.value;
-        invSetSlot(slot, "person", data.value);
-        slot.dataset.type = "person";
-        invTryUpdateConjugatedVerb();
-      }
-      if(sNum==="3"){
-        invState.gar = "gär";
-        invSetSlot(slot, "gar", "gär"); // always gär
-        slot.dataset.type = "gar";
-      }
-      if(sNum==="4"){
-        invState.info = data.value;
-        invSetSlot(slot, "info", data.value);
-        slot.dataset.type = "info";
-      }
-
-      invCheck();
-    });
-  });
-}
-
-function invRender(){
-  // ensure wired once
-  if(!window.__invWired){
-    invWireSlots();
-    window.__invWired = true;
-  }
-  invLoad();
-}
-
-document.getElementById("invReset").addEventListener("click", ()=>{
-  invLoad();
-});
-document.getElementById("invNext").addEventListener("click", ()=>{
-  invPos++;
-  if(invPos >= invOrder.length){
-    invOrder = shuffle(INV_EXAMPLES);
-    invPos = 0;
-  }
-  invLoad();
-});
 
 /* ===================== INIT ===================== */
 showGame(0);
