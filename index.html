@@ -24,6 +24,12 @@
       --white:#fff;
       --ok:#b7f0c8;
       --bad:#ffcccc;
+
+      /* Inversion colours (match your grammar sheet vibe) */
+      --inv-person:#d9edff; /* light blue */
+      --inv-verb:#e6dcff;   /* light purple */
+      --inv-gar:#ffd9c4;    /* peach */
+      --inv-info:#dbefff;   /* blue */
     }
 
     *{ margin:0; padding:0; box-sizing:border-box; }
@@ -282,6 +288,66 @@
       font-size:2.0rem;
     }
 
+    /* ===== Inversion game ===== */
+    .drag-bank{
+      width:min(980px, 100%);
+      margin: 0 auto 14px;
+      display:flex;
+      justify-content:center;
+      flex-wrap:wrap;
+      gap:10px;
+    }
+    .drag{
+      padding:12px 16px;
+      border-radius:18px;
+      font-size:1.35rem;
+      border:2px solid rgba(0,0,0,.08);
+      user-select:none;
+      cursor:grab;
+    }
+    .drag:active{ transform:scale(.98); }
+    .drag.verb{ background:var(--inv-verb); }
+    .drag.person{ background:var(--inv-person); }
+    .drag.gar{ background:var(--inv-gar); }
+    .drag.info{ background:var(--inv-info); }
+
+    .inv-zones{
+      width:min(980px, 100%);
+      margin: 0 auto;
+      display:grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap:10px;
+    }
+    .inv-slot{
+      background:var(--white);
+      border-radius:18px;
+      border:2px dashed rgba(108,74,163,.45);
+      min-height:72px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:1.45rem;
+      text-align:center;
+      padding:8px;
+    }
+    .inv-slot.over{
+      outline:4px solid rgba(108,74,163,.18);
+      outline-offset:2px;
+    }
+    .inv-slot.filled{
+      border-style:solid;
+    }
+
+    .inv-chip{
+      border-radius:14px;
+      padding:10px 12px;
+      display:inline-block;
+    }
+    .inv-chip.verb{ background:var(--inv-verb); }
+    .inv-chip.person{ background:var(--inv-person); }
+    .inv-chip.gar{ background:var(--inv-gar); }
+    .inv-chip.info{ background:var(--inv-info); }
+
     /* Modal */
     .overlay{
       position:fixed;
@@ -339,7 +405,7 @@
       </div>
     </section>
 
-    <!-- G2: Build from parts (moved up) -->
+    <!-- G2: Build from parts -->
     <section class="game" id="g9">
       <h2>Bauen: Stamm + Endung</h2>
       <div class="instruction-box">Wiel e Stamm an eng Endung. Du kanns probéieren (och falsch).</div>
@@ -368,7 +434,7 @@
       <div class="feedback" id="g9Fb"></div>
     </section>
 
-    <!-- G3: Stem/Ending/None/Both -->
+    <!-- G3: Change type -->
     <section class="game" id="g2">
       <h2>Stamm, Endung, Näischt, déi zwee</h2>
       <div class="instruction-box">Hei steet schonn d’konjugéiert Form. Wat ännert sech am Verglach mam Infinitiv?</div>
@@ -453,6 +519,29 @@
         <div class="choices" id="g8Choices"></div>
       </div>
       <div class="feedback" id="g8Fb"></div>
+    </section>
+
+    <!-- G8: Inversion with "gär" -->
+    <section class="game" id="gInv">
+      <h2>Inversioun – gär</h2>
+      <div class="instruction-box">Zéi d’Wierder an déi richteg Reiefolleg (1–4) fir eng Fro ze bauen.</div>
+
+      <div class="row-center">
+        <button class="secondary" id="invReset">Reset</button>
+        <button class="primary" id="invNext">Nächst Beispill</button>
+        <div class="pill" id="invProg">1 / …</div>
+      </div>
+
+      <div class="drag-bank" id="invBank"></div>
+
+      <div class="inv-zones">
+        <div class="inv-slot" data-slot="1" id="invSlot1">1</div>
+        <div class="inv-slot" data-slot="2" id="invSlot2">2</div>
+        <div class="inv-slot" data-slot="3" id="invSlot3">3</div>
+        <div class="inv-slot" data-slot="4" id="invSlot4">4</div>
+      </div>
+
+      <div class="feedback" id="invFeedback"></div>
     </section>
 
   </div>
@@ -568,7 +657,7 @@ function showGame(idx){
   document.getElementById("topTitle").textContent = "";
 
   // order:
-  // 0 g1, 1 g9, 2 g2, 3 g3, 4 g5, 5 g7, 6 g8
+  // 0 g1, 1 g9, 2 g2, 3 g3, 4 g5, 5 g7, 6 g8, 7 gInv
   if(idx===0) g1Render();
   if(idx===1) g9Render();
   if(idx===2) g2Render();
@@ -576,6 +665,7 @@ function showGame(idx){
   if(idx===4) g5Render();
   if(idx===5) g7Render(true);
   if(idx===6) g8Render();
+  if(idx===7) invRender();
 }
 
 document.getElementById("prevBtn").addEventListener("click", ()=>{
@@ -629,7 +719,7 @@ document.getElementById("g1Mix").addEventListener("click", ()=>{
   g1Render();
 });
 
-/* ===================== COMMON WRONG FORM MAKERS (used by multiple games) ===================== */
+/* ===================== COMMON WRONG FORM MAKERS ===================== */
 function makeEndingMistake(form){
   if(form.endsWith("en")) return form.slice(0,-2) + "t";
   if(form.endsWith("t")) return form.slice(0,-1) + "en";
@@ -649,7 +739,7 @@ function makeStemMistake(inf, personKey){
   return makeEndingMistake(correct);
 }
 
-/* ===================== G9 Build from parts (upgraded stems) ===================== */
+/* ===================== G9 Build from parts (stems improved) ===================== */
 let g9Deck = buildPersonVerbDeck();
 let g9Pos = 0;
 let g9SelStem = null;
@@ -662,8 +752,6 @@ function splitStemEnd(inf, pk){
   if(corr.endsWith("t"))  return {stem: corr.slice(0,-1), end:"t"};
   return {stem: corr, end:""};
 }
-
-/* --- stem option generators --- */
 function uniqueKeepOrder(arr){
   const out = [];
   const seen = new Set();
@@ -726,20 +814,17 @@ function makeImaginaryStems(baseStem, avoidSet, needCount){
 }
 function possibleRealStems(inf, pk){
   const v = getVerb(inf);
-
   const stemCorrect = splitStemEnd(inf, pk).stem;
   const stemInf     = stemOf(inf);
   const stemEch     = stemOf(v.forms.ech);
   const stemDu      = stemOf(v.forms.du);
   const stemHien    = stemOf(v.forms.hienhatt);
   const stemDir     = stemOf(v.forms.dir);
-
   return uniqueKeepOrder([stemCorrect, stemInf, stemEch, stemDu, stemHien, stemDir]);
 }
 function buildStemOptions(inf, pk, targetCount=4){
   const real = possibleRealStems(inf, pk);
   const avoid = new Set(real);
-
   let stems = real.slice(0);
 
   if(stems.length < targetCount){
@@ -775,10 +860,8 @@ function g9Render(){
   const corr = correctForm(item.inf, item.personKey);
   const parts = splitStemEnd(item.inf, item.personKey);
 
-  // upgraded stems: real alternatives first, otherwise imaginary vowel variants
   const stems = buildStemOptions(item.inf, item.personKey, 4);
 
-  // endings options
   let ends = shuffle(Array.from(new Set([parts.end, "en", "t", "s", ""]))).slice(0,4);
   if(!ends.includes(parts.end)) ends[0]=parts.end;
 
@@ -839,7 +922,7 @@ document.getElementById("g9Mix").addEventListener("click", ()=>{
   g9Render();
 });
 
-/* ===================== G2 Stamm/Endung/Näischt/déi zwee ===================== */
+/* ===================== G2 Change type ===================== */
 let g2Deck = buildPersonVerbDeck();
 let g2Pos = 0;
 
@@ -857,7 +940,7 @@ function changeTypeComparedToInf(inf, personKey){
   const stemChanged = corrStem !== infStem;
   const endChanged  = corrEnd !== infEnd;
 
-  if(stemChanged && endChanged) return "beides";  // label: "déi zwee"
+  if(stemChanged && endChanged) return "beides";
   if(stemChanged) return "stamm";
   if(endChanged)  return "endung";
   return "näischt";
@@ -871,7 +954,7 @@ function g2Render(){
   const corr = correctForm(item.inf, item.personKey);
   document.getElementById("g2Prompt").textContent = `${item.inf} → ${corr}`;
 
-  const expected = changeTypeComparedToInf(item.inf, item.personKey); // "stamm"|"endung"|"näischt"|"beides"
+  const expected = changeTypeComparedToInf(item.inf, item.personKey);
 
   function answer(choice){
     const ok = choice===expected;
@@ -1090,160 +1173,213 @@ document.getElementById("g8Mix").addEventListener("click", ()=>{
   g8Pos=0;
   g8Render();
 });
-<section class="game" id="gInversion">
-  <h2>Froestruktur – gär / net gär</h2>
 
-  <div class="instruction-box">
-    Zéi d’Wierder an déi richteg Reiefolleg (1–4) fir eng Fro ze bauen.
-  </div>
+/* ===================== Inversion – gär ===================== */
+/*
+Slots:
+1 = Verb (conjugated)
+2 = Person (du/hien/hatt/dir)
+3 = gär (net gär becomes gär when dropped)
+4 = Information (optional)
+*/
 
-  <!-- DRAG SOURCE -->
-  <div class="drag-bank" id="invBank"></div>
-
-  <!-- DROP ZONES -->
-  <div class="inv-zones">
-    <div class="inv-slot" data-slot="1">1</div>
-    <div class="inv-slot" data-slot="2">2</div>
-    <div class="inv-slot" data-slot="3">3</div>
-    <div class="inv-slot" data-slot="4">4</div>
-  </div>
-
-  <div class="feedback" id="invFeedback"></div>
-</section>
-
-<style>
-.drag-bank{
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-  justify-content:center;
-  margin-bottom:14px;
-}
-
-.drag{
-  padding:10px 14px;
-  border-radius:16px;
-  font-size:1.1rem;
-  cursor:grab;
-  user-select:none;
-  border:2px solid rgba(0,0,0,.1);
-}
-
-.drag.verb{ background:#e6dcff; }
-.drag.person{ background:#d9edff; }
-.drag.gar{ background:#ffd9c4; }
-.drag.info{ background:#dbefff; }
-
-.inv-zones{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:10px;
-  max-width:900px;
-  margin:0 auto;
-}
-
-.inv-slot{
-  background:white;
-  border-radius:18px;
-  border:2px dashed rgba(108,74,163,.4);
-  min-height:64px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:1.2rem;
-}
-.inv-slot.filled{
-  border-style:solid;
-}
-.flash-ok{ box-shadow:0 0 0 5px #b7f0c8; }
-.flash-bad{ box-shadow:0 0 0 5px #ffcccc; }
-</style>
-
-<script>
-const inversionData = [
+const INV_PERSONS = ["du","hien","hatt","dir"];
+const INV_EXAMPLES = [
   { verb:"schwammen", info:null },
   { verb:"spillen", info:"Fussball" },
   { verb:"liesen", info:null },
-  { verb:"kucken", info:"Tëlee" }
+  { verb:"kucken", info:"Tëlee" },
+  { verb:"danzen", info:null },
+  { verb:"lauschteren", info:"Musek" }
 ];
 
-const persons = ["du","hien","hatt","dir"];
+let invOrder = shuffle(INV_EXAMPLES);
+let invPos = 0;
 
-function conjugate(verb, person){
-  const map = {
-    schwammen:{du:"schwëmms",hien:"schwëmmt",hatt:"schwëmmt",dir:"schwammt"},
-    spillen:{du:"spills",hien:"spillt",hatt:"spillt",dir:"spillt"},
-    liesen:{du:"lies",hien:"liest",hatt:"liest",dir:"liest"},
-    kucken:{du:"kucks",hien:"kuckt",hatt:"kuckt",dir:"kuckt"}
-  };
-  return map[verb][person];
+let invChosen = null;
+let invState = { verbInf:null, person:null, gar:null, info:null };
+
+function invSetSlot(slotEl, type, text){
+  slotEl.classList.add("filled");
+  slotEl.innerHTML = `<span class="inv-chip ${type}">${text}</span>`;
+}
+function invResetSlots(){
+  invState = { verbInf:null, person:null, gar:null, info:null };
+  ["invSlot1","invSlot2","invSlot3","invSlot4"].forEach((id)=>{
+    const el = document.getElementById(id);
+    el.classList.remove("filled","over","flash-green","flash-red");
+    el.textContent = el.dataset.slot;
+    el.dataset.type = "";
+  });
+  clearFb("invFeedback");
 }
 
-let current;
+function invMakeTile(text, cls, type){
+  const d = document.createElement("div");
+  d.className = `drag ${cls}`;
+  d.textContent = text;
+  d.draggable = true;
+  d.dataset.type = type;
+  d.dataset.value = text;
+  d.addEventListener("dragstart", (e)=>{
+    e.dataTransfer.setData("text/plain", JSON.stringify({type, value:text}));
+  });
+  return d;
+}
 
-function loadInversion(){
-  current = inversionData[Math.floor(Math.random()*inversionData.length)];
+function invConjugate(inf, personLabel){
+  // use existing data where possible, with mapping person->personKey
+  const mapPersonKey = { "du":"du", "hien":"hienhatt", "hatt":"hienhatt", "dir":"dir" };
+
+  // if verb exists in VERBS list:
+  const v = getVerb(inf);
+  if(v){
+    const pk = mapPersonKey[personLabel];
+    return v.forms[pk];
+  }
+
+  // fallback (shouldn't happen)
+  return inf;
+}
+
+function invLoad(){
+  invChosen = invOrder[invPos];
+  document.getElementById("invProg").textContent = `${invPos+1} / ${invOrder.length}`;
+
   const bank = document.getElementById("invBank");
   bank.innerHTML = "";
+  invResetSlots();
 
-  const make = (txt,cls,type)=>{
-    const d = document.createElement("div");
-    d.className = `drag ${cls}`;
-    d.textContent = txt;
-    d.draggable = true;
-    d.dataset.type = type;
-    d.dataset.value = txt;
-    d.ondragstart = e=>e.dataTransfer.setData("text/plain",JSON.stringify(d.dataset));
-    bank.appendChild(d);
-  };
+  // Tiles (top bank)
+  bank.appendChild(invMakeTile(invChosen.verb, "verb", "verb"));
+  INV_PERSONS.forEach(p=> bank.appendChild(invMakeTile(p, "person", "person")));
+  bank.appendChild(invMakeTile("gär", "gar", "gar"));
+  bank.appendChild(invMakeTile("net gär", "gar", "gar"));
+  if(invChosen.info) bank.appendChild(invMakeTile(invChosen.info, "info", "info"));
+}
 
-  make(current.verb,"verb","verb");
-  persons.forEach(p=>make(p,"person","person"));
-  make("gär","gar","gar");
-  make("net gär","gar","gar");
-  if(current.info) make(current.info,"info","info");
+function invTryUpdateConjugatedVerb(){
+  // If verb + person are both set, update slot1 with conjugated form
+  if(invState.verbInf && invState.person){
+    const slot1 = document.getElementById("invSlot1");
+    const conj = invConjugate(invState.verbInf, invState.person);
+    invSetSlot(slot1, "verb", conj);
+    slot1.dataset.type = "verb";
+  }
+}
 
-  document.querySelectorAll(".inv-slot").forEach(s=>{
-    s.innerHTML = s.dataset.slot;
-    s.classList.remove("filled");
+function invCheck(){
+  // must have verb, person, gar. info required only if example has it.
+  if(!invState.verbInf || !invState.person || !invState.gar) return;
+  if(invChosen.info && !invState.info) return;
+
+  // verify verb in slot1 is correct conjugation
+  const conj = invConjugate(invState.verbInf, invState.person);
+
+  const slot1Text = document.getElementById("invSlot1").textContent.trim();
+  const slot2Text = document.getElementById("invSlot2").textContent.trim();
+  const slot3Text = document.getElementById("invSlot3").textContent.trim();
+  const slot4Text = document.getElementById("invSlot4").textContent.trim();
+
+  const okVerb = slot1Text === conj;
+  const okPerson = slot2Text === invState.person;
+  const okGar = slot3Text === "gär";
+  const okInfo = !invChosen.info || slot4Text === invChosen.info;
+
+  const ok = okVerb && okPerson && okGar && okInfo;
+
+  const slots = [document.getElementById("invSlot1"),document.getElementById("invSlot2"),document.getElementById("invSlot3"),document.getElementById("invSlot4")];
+  slots.forEach(s=>{
+    s.classList.remove("flash-green","flash-red");
+    void s.offsetWidth;
+    s.classList.add(ok ? "flash-green" : "flash-red");
   });
-  document.getElementById("invFeedback").textContent="";
+
+  setFb("invFeedback", ok ? "Richteg!" : "Nach eng Kéier.", ok);
+
+  if(ok){
+    setTimeout(()=>{
+      invPos++;
+      if(invPos >= invOrder.length){
+        showModal("Bravo!", "Alles fäerdeg!", ()=>{
+          invOrder = shuffle(INV_EXAMPLES);
+          invPos = 0;
+          invLoad();
+        });
+      }else{
+        invLoad();
+      }
+    }, 750);
+  }
 }
 
-document.querySelectorAll(".inv-slot").forEach(slot=>{
-  slot.ondragover = e=>e.preventDefault();
-  slot.ondrop = e=>{
-    e.preventDefault();
-    const data = JSON.parse(e.dataTransfer.getData("text/plain"));
-    slot.textContent = data.type==="gar" ? "gär" : data.value;
-    slot.dataset.type = data.type;
-    slot.classList.add("filled");
-    checkInversion();
-  };
+function invWireSlots(){
+  document.querySelectorAll(".inv-slot").forEach(slot=>{
+    slot.addEventListener("dragover", (e)=>{ e.preventDefault(); slot.classList.add("over"); });
+    slot.addEventListener("dragleave", ()=> slot.classList.remove("over"));
+    slot.addEventListener("drop", (e)=>{
+      e.preventDefault();
+      slot.classList.remove("over");
+
+      const data = JSON.parse(e.dataTransfer.getData("text/plain"));
+      const sNum = slot.dataset.slot;
+
+      // basic slot-type expectations:
+      // 1 verb, 2 person, 3 gar, 4 info (optional)
+      if(sNum==="1" && data.type!=="verb"){ flash(slot,"flash-red"); return; }
+      if(sNum==="2" && data.type!=="person"){ flash(slot,"flash-red"); return; }
+      if(sNum==="3" && data.type!=="gar"){ flash(slot,"flash-red"); return; }
+      if(sNum==="4" && data.type!=="info"){ flash(slot,"flash-red"); return; }
+
+      // Place
+      if(sNum==="1"){
+        invState.verbInf = data.value;
+        invSetSlot(slot, "verb", data.value); // will be updated after person drop
+        slot.dataset.type = "verb";
+        invTryUpdateConjugatedVerb();
+      }
+      if(sNum==="2"){
+        invState.person = data.value;
+        invSetSlot(slot, "person", data.value);
+        slot.dataset.type = "person";
+        invTryUpdateConjugatedVerb();
+      }
+      if(sNum==="3"){
+        invState.gar = "gär";
+        invSetSlot(slot, "gar", "gär"); // always gär
+        slot.dataset.type = "gar";
+      }
+      if(sNum==="4"){
+        invState.info = data.value;
+        invSetSlot(slot, "info", data.value);
+        slot.dataset.type = "info";
+      }
+
+      invCheck();
+    });
+  });
+}
+
+function invRender(){
+  // ensure wired once
+  if(!window.__invWired){
+    invWireSlots();
+    window.__invWired = true;
+  }
+  invLoad();
+}
+
+document.getElementById("invReset").addEventListener("click", ()=>{
+  invLoad();
 });
-
-function checkInversion(){
-  const s = [...document.querySelectorAll(".inv-slot")];
-  if(!s.every(x=>x.classList.contains("filled"))) return;
-
-  const [v,p,g,i] = s.map(x=>x.textContent);
-
-  const ok =
-    v === conjugate(current.verb,p) &&
-    g === "gär" &&
-    (!current.info || i === current.info);
-
-  const fb = document.getElementById("invFeedback");
-  fb.textContent = ok ? "Richteg!" : "Nach eng Kéier.";
-  fb.className = "feedback " + (ok?"ok":"bad");
-
-  s.forEach(x=>x.classList.add(ok?"flash-ok":"flash-bad"));
-
-  if(ok) setTimeout(loadInversion,900);
-}
-
-loadInversion();
-</script>
+document.getElementById("invNext").addEventListener("click", ()=>{
+  invPos++;
+  if(invPos >= invOrder.length){
+    invOrder = shuffle(INV_EXAMPLES);
+    invPos = 0;
+  }
+  invLoad();
+});
 
 /* ===================== INIT ===================== */
 showGame(0);
