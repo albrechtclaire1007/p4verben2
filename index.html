@@ -1090,6 +1090,160 @@ document.getElementById("g8Mix").addEventListener("click", ()=>{
   g8Pos=0;
   g8Render();
 });
+<section class="game" id="gInversion">
+  <h2>Froestruktur – gär / net gär</h2>
+
+  <div class="instruction-box">
+    Zéi d’Wierder an déi richteg Reiefolleg (1–4) fir eng Fro ze bauen.
+  </div>
+
+  <!-- DRAG SOURCE -->
+  <div class="drag-bank" id="invBank"></div>
+
+  <!-- DROP ZONES -->
+  <div class="inv-zones">
+    <div class="inv-slot" data-slot="1">1</div>
+    <div class="inv-slot" data-slot="2">2</div>
+    <div class="inv-slot" data-slot="3">3</div>
+    <div class="inv-slot" data-slot="4">4</div>
+  </div>
+
+  <div class="feedback" id="invFeedback"></div>
+</section>
+
+<style>
+.drag-bank{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  justify-content:center;
+  margin-bottom:14px;
+}
+
+.drag{
+  padding:10px 14px;
+  border-radius:16px;
+  font-size:1.1rem;
+  cursor:grab;
+  user-select:none;
+  border:2px solid rgba(0,0,0,.1);
+}
+
+.drag.verb{ background:#e6dcff; }
+.drag.person{ background:#d9edff; }
+.drag.gar{ background:#ffd9c4; }
+.drag.info{ background:#dbefff; }
+
+.inv-zones{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+  max-width:900px;
+  margin:0 auto;
+}
+
+.inv-slot{
+  background:white;
+  border-radius:18px;
+  border:2px dashed rgba(108,74,163,.4);
+  min-height:64px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:1.2rem;
+}
+.inv-slot.filled{
+  border-style:solid;
+}
+.flash-ok{ box-shadow:0 0 0 5px #b7f0c8; }
+.flash-bad{ box-shadow:0 0 0 5px #ffcccc; }
+</style>
+
+<script>
+const inversionData = [
+  { verb:"schwammen", info:null },
+  { verb:"spillen", info:"Fussball" },
+  { verb:"liesen", info:null },
+  { verb:"kucken", info:"Tëlee" }
+];
+
+const persons = ["du","hien","hatt","dir"];
+
+function conjugate(verb, person){
+  const map = {
+    schwammen:{du:"schwëmms",hien:"schwëmmt",hatt:"schwëmmt",dir:"schwammt"},
+    spillen:{du:"spills",hien:"spillt",hatt:"spillt",dir:"spillt"},
+    liesen:{du:"lies",hien:"liest",hatt:"liest",dir:"liest"},
+    kucken:{du:"kucks",hien:"kuckt",hatt:"kuckt",dir:"kuckt"}
+  };
+  return map[verb][person];
+}
+
+let current;
+
+function loadInversion(){
+  current = inversionData[Math.floor(Math.random()*inversionData.length)];
+  const bank = document.getElementById("invBank");
+  bank.innerHTML = "";
+
+  const make = (txt,cls,type)=>{
+    const d = document.createElement("div");
+    d.className = `drag ${cls}`;
+    d.textContent = txt;
+    d.draggable = true;
+    d.dataset.type = type;
+    d.dataset.value = txt;
+    d.ondragstart = e=>e.dataTransfer.setData("text/plain",JSON.stringify(d.dataset));
+    bank.appendChild(d);
+  };
+
+  make(current.verb,"verb","verb");
+  persons.forEach(p=>make(p,"person","person"));
+  make("gär","gar","gar");
+  make("net gär","gar","gar");
+  if(current.info) make(current.info,"info","info");
+
+  document.querySelectorAll(".inv-slot").forEach(s=>{
+    s.innerHTML = s.dataset.slot;
+    s.classList.remove("filled");
+  });
+  document.getElementById("invFeedback").textContent="";
+}
+
+document.querySelectorAll(".inv-slot").forEach(slot=>{
+  slot.ondragover = e=>e.preventDefault();
+  slot.ondrop = e=>{
+    e.preventDefault();
+    const data = JSON.parse(e.dataTransfer.getData("text/plain"));
+    slot.textContent = data.type==="gar" ? "gär" : data.value;
+    slot.dataset.type = data.type;
+    slot.classList.add("filled");
+    checkInversion();
+  };
+});
+
+function checkInversion(){
+  const s = [...document.querySelectorAll(".inv-slot")];
+  if(!s.every(x=>x.classList.contains("filled"))) return;
+
+  const [v,p,g,i] = s.map(x=>x.textContent);
+
+  const ok =
+    v === conjugate(current.verb,p) &&
+    g === "gär" &&
+    (!current.info || i === current.info);
+
+  const fb = document.getElementById("invFeedback");
+  fb.textContent = ok ? "Richteg!" : "Nach eng Kéier.";
+  fb.className = "feedback " + (ok?"ok":"bad");
+
+  s.forEach(x=>x.classList.add(ok?"flash-ok":"flash-bad"));
+
+  if(ok) setTimeout(loadInversion,900);
+}
+
+loadInversion();
+</script>
 
 /* ===================== INIT ===================== */
 showGame(0);
