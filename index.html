@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>P4 – Verben (Spiller)</title>
+  <title>P4 – Verben – Spiller</title>
 
   <style>
     /* FONT */
@@ -22,10 +22,8 @@
       --purple-dark:#6c4aa3;
       --ink:#2d1844;
       --white:#fff;
-      --ok:#b7f0c8;
-      --bad:#ffcccc;
 
-      /* Sentence colours (as requested) */
+      /* Sentence colours */
       --subj:#b7f0c8;   /* green */
       --verb:#e6dcff;   /* purple-ish */
       --gar:#ffd9c4;    /* orange */
@@ -50,22 +48,25 @@
     /* TOP BAR */
     .top-bar{
       max-width:1100px;
-      margin:0 auto 8px;
+      margin:0 auto 10px;
       display:flex;
       align-items:center;
       justify-content:space-between;
-      background:var(--purple-mid);
+      background:var(--purple-dark);
       border-radius:999px;
       padding:6px 12px;
       color:var(--white);
       gap:10px;
+      box-shadow: 0 10px 18px rgba(45,24,68,.12);
     }
     .top-bar-title{
-      font-size:1.55rem;
+      font-size:1.45rem;
       flex:1;
       text-align:center;
       min-height:1.4em;
-      opacity:.95;
+      opacity:.98;
+      padding:0 6px;
+      line-height:1.15;
     }
     .top-arrow{
       width:38px;
@@ -84,24 +85,16 @@
       max-width:1100px;
       margin:0 auto 14px;
       text-align:center;
-      font-size:1.25rem;
+      font-size:1.2rem;
       opacity:0.85;
     }
 
-    .games{
-      max-width:1100px;
-      margin:0 auto;
-    }
-
+    .games{ max-width:1100px; margin:0 auto; }
     .game{ display:none; }
     .game.active{ display:block; }
 
-    h2{
-      font-size:1.55rem;
-      margin-bottom:8px;
-      text-align:center;
-      color:var(--purple-dark);
-    }
+    /* Titles handled by top bar */
+    h2{ display:none; }
 
     .instruction-box{
       background:var(--white);
@@ -133,7 +126,7 @@
     .secondary{
       padding:8px 14px;
       border-radius:999px;
-      border:2px solid var(--purple-mid);
+      border:2px solid rgba(108,74,163,.25);
       background:white;
       color:var(--ink);
       font-size:1.15rem;
@@ -155,7 +148,7 @@
     .feedback.ok{ color:#117a3a; }
     .feedback.bad{ color:#b02323; }
 
-    /* ===== Prompt box ===== */
+    /* Prompt box */
     .big-box{
       width:min(860px, 100%);
       background:var(--white);
@@ -165,14 +158,13 @@
       text-align:center;
       margin: 0 auto;
     }
-
     .promptLine{
       font-size:2.75rem;
       color:var(--purple-dark);
       line-height:1.1;
     }
 
-    /* ===== Choice buttons ===== */
+    /* Choice buttons */
     .choices{
       display:flex;
       justify-content:center;
@@ -203,7 +195,7 @@
       100%{ box-shadow:none; }
     }
 
-    /* ===== Mini table ===== */
+    /* Mini table */
     table{
       width: min(860px, 100%);
       margin: 0 auto;
@@ -233,7 +225,7 @@
       font-size:1.25rem;
     }
 
-    /* ===== Build from parts ===== */
+    /* Build from parts */
     .parts{
       width:min(900px, 100%);
       margin: 0 auto;
@@ -283,10 +275,78 @@
       font-size:2.0rem;
     }
 
-    /* ===== Sentence drag game (WORKING) ===== */
-    .sent-bank{
+    /* Sentence inversion game */
+    .sent-area{
       width:min(980px, 100%);
-      margin: 0 auto 14px;
+      margin: 0 auto;
+    }
+
+    .sent-caption{
+      text-align:center;
+      font-size:1.25rem;
+      opacity:.85;
+      margin: 4px 0 8px;
+    }
+
+    .sent-row{
+      display:flex;
+      justify-content:center;
+      align-items:flex-end;
+      gap:12px;
+      flex-wrap:wrap;
+      margin: 0 auto 10px;
+    }
+
+    .slotStack{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:6px;
+      min-width: 160px;
+    }
+
+    .sent-slot{
+      width: 100%;
+      min-height:76px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      border-radius:18px;
+      border:2px dashed rgba(108,74,163,.45);
+      background: var(--white);
+      padding:10px;
+      font-size:1.55rem;
+      user-select:none;
+    }
+
+    .sent-slot.locked{
+      border-style:solid;
+      border-color: rgba(108,74,163,.18);
+      opacity:.95;
+    }
+
+    .sent-slot.over{
+      outline:4px solid rgba(108,74,163,.18);
+      outline-offset:2px;
+    }
+    .sent-slot.filled{ border-style:solid; }
+
+    .posnum{
+      font-size:1.15rem;
+      opacity:.7;
+    }
+
+    .punct{
+      font-size:2.2rem;
+      color: var(--purple-dark);
+      padding: 0 2px 10px;
+      line-height:1;
+    }
+
+    .bank{
+      width:min(980px, 100%);
+      margin: 12px auto 14px;
       display:flex;
       justify-content:center;
       flex-wrap:wrap;
@@ -300,49 +360,21 @@
       border:2px solid rgba(0,0,0,.08);
       user-select:none;
       cursor:grab;
+      background: var(--white);
     }
     .word:active{ transform:scale(.98); }
 
-    .word.subj{ background: var(--subj); }
-    .word.verb{ background: var(--verb); }
-    .word.gar{  background: var(--gar); }
-    .word.info{ background: var(--info); }
-
-    .sent-slots{
-      width:min(980px, 100%);
-      margin: 0 auto;
-      display:grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap:12px;
-    }
-
-    .sent-slot{
-      background:var(--white);
-      border-radius:18px;
-      border:2px dashed rgba(108,74,163,.45);
-      min-height:76px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size:1.55rem;
-      text-align:center;
-      padding:10px;
-    }
-
-    .sent-slot.over{
-      outline:4px solid rgba(108,74,163,.18);
-      outline-offset:2px;
-    }
-    .sent-slot.filled{
-      border-style:solid;
-    }
+    .subj{ background: var(--subj); }
+    .verb{ background: var(--verb); }
+    .gar { background: var(--gar); }
+    .info{ background: var(--info); }
 
     .magic{
-      animation: magicPop .35s ease;
+      animation: magicPop .45s ease;
     }
     @keyframes magicPop{
       0%   { transform:scale(1); filter:brightness(1); }
-      40%  { transform:scale(1.08); filter:brightness(1.15); }
+      35%  { transform:scale(1.10); filter:brightness(1.18); }
       100% { transform:scale(1); filter:brightness(1); }
     }
 
@@ -385,14 +417,13 @@
     <button class="top-arrow" id="nextBtn" aria-label="Nächst Spill">›</button>
   </div>
 
-  <div class="subtitle">P4 – Verben (Konjugéieren)</div>
+  <div class="subtitle">P4 – Verben – Konjugéieren</div>
 
   <div class="games">
 
-    <!-- G1 Oral -->
     <section class="game active" id="g1">
-      <h2>Konjugéieren (mëndlech)</h2>
-      <div class="instruction-box">Kuck d’Form a konjugéier (mëndlech). Keng Kontroll.</div>
+      <h2>Konjugéieren mëndlech</h2>
+      <div class="instruction-box">Kuck d’Form a konjugéier. Keng Kontroll.</div>
       <div class="row-center">
         <button class="primary" id="g1Next">Nächst</button>
         <button class="secondary" id="g1Mix">Nei mixen</button>
@@ -403,10 +434,9 @@
       </div>
     </section>
 
-    <!-- G2: Build from parts -->
     <section class="game" id="g9">
-      <h2>Bauen: Stamm + Endung</h2>
-      <div class="instruction-box">Wiel e Stamm an eng Endung. Du kanns probéieren (och falsch).</div>
+      <h2>Bauen Stamm an Endung</h2>
+      <div class="instruction-box">Wiel e Stamm an eng Endung. Du kanns probéieren.</div>
       <div class="row-center">
         <button class="secondary" id="g9Mix">Nei mixen</button>
         <button class="primary" id="g9Check">Kontrolléieren</button>
@@ -432,10 +462,9 @@
       <div class="feedback" id="g9Fb"></div>
     </section>
 
-    <!-- G3: Change type -->
     <section class="game" id="g2">
       <h2>Stamm, Endung, Näischt, déi zwee</h2>
-      <div class="instruction-box">Hei steet schonn d’konjugéiert Form. Wat ännert sech am Verglach mam Infinitiv?</div>
+      <div class="instruction-box">Hei steet schonn d’konjugéiert Form. Wat ännert sech am Verglach mam Infinitiv.</div>
       <div class="row-center">
         <button class="secondary" id="g2Mix">Nei mixen</button>
         <div class="pill" id="g2Prog">1 / …</div>
@@ -452,9 +481,8 @@
       <div class="feedback" id="g2Fb"></div>
     </section>
 
-    <!-- G4: MCQ -->
     <section class="game" id="g3">
-      <h2>Richteg Form (3 Optiounen)</h2>
+      <h2>Richteg Form 3 Optiounen</h2>
       <div class="instruction-box">Wiel déi richteg konjugéiert Form.</div>
       <div class="row-center">
         <button class="secondary" id="g3Mix">Nei mixen</button>
@@ -467,10 +495,9 @@
       <div class="feedback" id="g3Fb"></div>
     </section>
 
-    <!-- G5: Fill red cells -->
     <section class="game" id="g5">
       <h2>Fëll d’rout Felder</h2>
-      <div class="instruction-box">Fëll just: du / hien-hatt / dir. Klick “Kontrolléieren”. (All Verb kënnt just eemol.)</div>
+      <div class="instruction-box">Fëll just du, hien-hatt, dir. Klick Kontrolléieren. All Verb kënnt just eemol.</div>
       <div class="row-center">
         <button class="secondary" id="g5NextVerb">Nächst Verb</button>
         <button class="primary" id="g5Check">Kontrolléieren</button>
@@ -487,10 +514,9 @@
       <div class="feedback" id="g5Fb"></div>
     </section>
 
-    <!-- G6: Race -->
     <section class="game" id="g7">
-      <h2>Konjugatiouns-Race</h2>
-      <div class="instruction-box">Soen et aus. Klick “Äntwert weisen” fir d’Léisung (wann néideg).</div>
+      <h2>Konjugatiouns Race</h2>
+      <div class="instruction-box">Soen et aus. Klick Äntwert weisen fir d’Léisung.</div>
       <div class="row-center">
         <button class="primary" id="g7Next">Nächst</button>
         <button class="secondary" id="g7Show">Äntwert weisen</button>
@@ -503,10 +529,9 @@
       </div>
     </section>
 
-    <!-- G7: Fix the mistake -->
     <section class="game" id="g8">
       <h2>Feeler verbesseren</h2>
-      <div class="instruction-box">Wiel déi richteg Form (dat anert ass falsch).</div>
+      <div class="instruction-box">Wiel déi richteg Form. Dat anert ass falsch.</div>
       <div class="row-center">
         <button class="secondary" id="g8Mix">Nei mixen</button>
         <div class="pill" id="g8Prog">1 / …</div>
@@ -519,10 +544,10 @@
       <div class="feedback" id="g8Fb"></div>
     </section>
 
-    <!-- G8: Sentence drag (WORKING) -->
+    <!-- Inversion game -->
     <section class="game" id="gInv">
-      <h2>Sazstruktur – gär</h2>
-      <div class="instruction-box">Zéi d’Wierder aus dem Saz an déi richteg Këschten (1–4).</div>
+      <h2>Sazstruktur Inversioun</h2>
+      <div class="instruction-box">Uewen ass de ginnene Saz. Drënner stell d’Wierder esou ëm, datt déi aner Form entsteet. D’Punktuatioun steet nieft de Këschten.</div>
 
       <div class="row-center">
         <button class="secondary" id="invReset">Reset</button>
@@ -530,16 +555,55 @@
         <div class="pill" id="invProg">1 / …</div>
       </div>
 
-      <div class="sent-bank" id="sentBank"></div>
+      <div class="sent-area">
+        <div class="sent-caption" id="givenCaption">Ginn Saz</div>
 
-      <div class="sent-slots" id="sentSlots">
-        <div class="sent-slot" data-slot="1" data-accept="subj">1</div>
-        <div class="sent-slot" data-slot="2" data-accept="verb">2</div>
-        <div class="sent-slot" data-slot="3" data-accept="gar">3</div>
-        <div class="sent-slot" data-slot="4" data-accept="info">4</div>
+        <div class="sent-row" id="givenRow">
+          <div class="slotStack">
+            <div class="sent-slot locked" id="given1"></div>
+            <div class="posnum">1</div>
+          </div>
+          <div class="slotStack">
+            <div class="sent-slot locked" id="given2"></div>
+            <div class="posnum">2</div>
+          </div>
+          <div class="slotStack">
+            <div class="sent-slot locked" id="given3"></div>
+            <div class="posnum">3</div>
+          </div>
+          <div class="slotStack" id="givenStack4">
+            <div class="sent-slot locked" id="given4"></div>
+            <div class="posnum">4</div>
+          </div>
+          <div class="punct" id="givenPunct">.</div>
+        </div>
+
+        <div class="sent-caption" id="targetCaption">Du méchs déi aner Form</div>
+
+        <div class="sent-row" id="targetRow">
+          <div class="slotStack">
+            <div class="sent-slot" data-slot="1" id="t1"></div>
+            <div class="posnum">1</div>
+          </div>
+          <div class="slotStack">
+            <div class="sent-slot" data-slot="2" id="t2"></div>
+            <div class="posnum">2</div>
+          </div>
+          <div class="slotStack">
+            <div class="sent-slot" data-slot="3" id="t3"></div>
+            <div class="posnum">3</div>
+          </div>
+          <div class="slotStack" id="targetStack4">
+            <div class="sent-slot" data-slot="4" id="t4"></div>
+            <div class="posnum">4</div>
+          </div>
+          <div class="punct" id="targetPunct">?</div>
+        </div>
+
+        <div class="bank" id="invBank"></div>
+
+        <div class="feedback" id="invFeedback"></div>
       </div>
-
-      <div class="feedback" id="invFeedback"></div>
     </section>
 
   </div>
@@ -563,7 +627,6 @@ function shuffle(arr){
   return a;
 }
 function randInt(n){ return Math.floor(Math.random()*n); }
-function pick(arr){ return arr[randInt(arr.length)]; }
 
 function flash(el, cls){
   el.classList.remove("flash-green","flash-red","magic");
@@ -615,10 +678,10 @@ function conjRegular(inf){
 
 const VERBS = [];
 Object.keys(IRREG_EXPLICIT).forEach(v=>{
-  VERBS.push({inf:v, forms: IRREG_EXPLICIT[v], type: (v==="spillen") ? "regular" : "irregular"});
+  VERBS.push({inf:v, forms: IRREG_EXPLICIT[v]});
 });
 REGULAR.forEach(v=>{
-  VERBS.push({inf:v, forms: conjRegular(v), type:"regular"});
+  VERBS.push({inf:v, forms: conjRegular(v)});
 });
 
 const STEM_CHANGE = new Set(["fueren","schwammen","molen","lafen","maachen"]);
@@ -647,16 +710,25 @@ function showModal(title, text, onClick){
   };
 }
 
-/* ===================== NAV ===================== */
+/* ===================== NAV + TOP TITLES ===================== */
 const gameEls = Array.from(document.querySelectorAll(".game"));
+const GAME_TITLES = [
+  "1. Konjugéieren mëndlech",
+  "2. Bauen Stamm an Endung",
+  "3. Stamm, Endung, Näischt, déi zwee",
+  "4. Richteg Form 3 Optiounen",
+  "5. Fëll d’rout Felder",
+  "6. Konjugatiouns Race",
+  "7. Feeler verbesseren",
+  "8. Sazstruktur Inversioun"
+];
 let gameIndex = 0;
 
 function showGame(idx){
   gameEls.forEach((g,i)=>g.classList.toggle("active", i===idx));
   gameIndex = idx;
-  document.getElementById("topTitle").textContent = "";
+  document.getElementById("topTitle").textContent = GAME_TITLES[idx] || "";
 
-  // 0 g1, 1 g9, 2 g2, 3 g3, 4 g5, 5 g7, 6 g8, 7 gInv
   if(idx===0) g1Render();
   if(idx===1) g9Render();
   if(idx===2) g2Render();
@@ -664,7 +736,7 @@ function showGame(idx){
   if(idx===4) g5Render();
   if(idx===5) g7Render(true);
   if(idx===6) g8Render();
-  if(idx===7) invLoadSentence();
+  if(idx===7) invLoadRound();
 }
 
 document.getElementById("prevBtn").addEventListener("click", ()=>{
@@ -685,7 +757,7 @@ function buildPersonVerbDeck(){
   return shuffle(deck);
 }
 
-/* ===================== G1 Oral ===================== */
+/* ===================== G1 ===================== */
 let g1Deck = buildPersonVerbDeck();
 let g1Pos = 0;
 
@@ -794,6 +866,8 @@ function makeImaginaryStems(baseStem, avoidSet, needCount){
   }
   return fakes;
 }
+
+/* ====== CONTINUE FROM HERE ====== */
 function possibleRealStems(inf, pk){
   const v = getVerb(inf);
   const stemCorrect = splitStemEnd(inf, pk).stem;
@@ -989,7 +1063,7 @@ document.getElementById("g3Mix").addEventListener("click", ()=>{
   g3Render();
 });
 
-/* ===================== G5 Fill red cells (each verb once) ===================== */
+/* ===================== G5 Fill red cells ===================== */
 let g5VerbDeck = shuffle(VERBS.map(v=>v.inf));
 let g5VerbPos = 0;
 let g5Verb = g5VerbDeck[g5VerbPos];
@@ -1045,7 +1119,7 @@ function g5Render(){
 function g5AdvanceOrFinish(){
   g5VerbPos++;
   if(g5VerbPos >= g5VerbDeck.length){
-    showModal("Bravo!", "Du hues all Verben am Spill gemaach!", ()=>{
+    showModal("Bravo!", "Du hues all Verben gemaach!", ()=>{
       showGame((gameIndex + 1) % gameEls.length);
     });
     return;
@@ -1143,21 +1217,20 @@ document.getElementById("g8Mix").addEventListener("click", ()=>{
   g8Render();
 });
 
-/* ===================== GInv Sentence drag (THIS IS THE FIX) ===================== */
+/* ===================== GInv Sentence Inversion ===================== */
 /*
-Top bank shows only the words of the sentence in correct sentence order:
-Ech - (verb in 1st pers sg) - gär/net gär - (info optional)
-
-Drop into slots 1-4 (empty).
-When dropped:
-- "Ech" becomes "du" (magic)
-- verb (ech form) becomes du form (magic)
-- "net gär" becomes "gär" (magic) and "gär" stays "gär"
-Colours:
-subject green, verb purple, gär/net gär orange, info blue
+Goal:
+- Given sentence shown (locked) is either affirmative (Ech ...) OR question (Du ... ?).
+- Bank contains the words of the GIVEN sentence.
+- Students must arrange them into the OTHER form (same slots/positions shown 1–4).
+- Verb "magically" transforms:
+    * Target affirmative => verb becomes ech-form
+    * Target question   => verb becomes du-form
+- Subject also changes between Ech/du accordingly.
+- Punctuation is OUTSIDE boxes and aligned with the sentence row.
 */
 
-const SENT_EXAMPLES = [
+const INV_EXAMPLES = [
   { verb:"spillen", gar:"gär", info:"Fussball" },
   { verb:"kucken", gar:"net gär", info:"Tëlee" },
   { verb:"lauschteren", gar:"gär", info:"Musek" },
@@ -1175,11 +1248,14 @@ const SENT_EXAMPLES = [
   { verb:"boxen", gar:"net gär", info:null }
 ];
 
-let sentOrder = shuffle(SENT_EXAMPLES);
-let sentPos = 0;
-let sentCurrent = null;
+let invOrder = shuffle(INV_EXAMPLES);
+let invPos = 0;
+let invCurrent = null;
 
-let sentState = { subj:null, verb:null, gar:null, info:null };
+let invModeGiven = "AFF"; // "AFF" or "Q"
+let invNeedInfo = false;
+
+let invPlaced = {1:null,2:null,3:null,4:null}; // store placed token types
 
 function invClearFeedback(){
   const el = document.getElementById("invFeedback");
@@ -1192,182 +1268,247 @@ function invSetFeedback(text, ok){
   el.className = "feedback " + (ok ? "ok" : "bad");
 }
 
-function makeWordTile(text, cls, type){
+function conjEch(inf){ return correctForm(inf, "ech"); }
+function conjDu(inf){ return correctForm(inf, "du"); }
+
+function makeBankTile(text, cls, token){
   const w = document.createElement("div");
   w.className = `word ${cls}`;
   w.textContent = text;
   w.draggable = true;
-  w.dataset.type = type; // subj/verb/gar/info
+  w.dataset.token = token; // "SUBJ" | "VERB" | "GAR" | "INFO"
   w.dataset.value = text;
   w.addEventListener("dragstart", (e)=>{
-    e.dataTransfer.setData("text/plain", JSON.stringify({type, value:text}));
+    e.dataTransfer.setData("text/plain", JSON.stringify({token, value:text}));
   });
   return w;
 }
 
-function conjEch(inf){ return correctForm(inf, "ech"); }
-function conjDu(inf){ return correctForm(inf, "du"); }
-
-function resetSentenceSlots(hasInfo){
-  sentState = { subj:null, verb:null, gar:null, info:null };
+function clearTargetSlots(hasInfo){
+  invPlaced = {1:null,2:null,3:null,4:null};
   invClearFeedback();
 
-  const slotsWrap = document.getElementById("sentSlots");
-  slotsWrap.style.gridTemplateColumns = hasInfo ? "repeat(4,1fr)" : "repeat(3,1fr)";
+  const t4Stack = document.getElementById("targetStack4");
+  const g4Stack = document.getElementById("givenStack4");
+  t4Stack.style.display = hasInfo ? "flex" : "none";
+  g4Stack.style.display = hasInfo ? "flex" : "none";
 
-  document.querySelectorAll(".sent-slot").forEach(s=>{
-    s.classList.remove("filled","over","magic","flash-green","flash-red");
-    s.textContent = s.dataset.slot;
+  // reset slot text
+  ["t1","t2","t3","t4"].forEach((id, i)=>{
+    const el = document.getElementById(id);
+    if(!el) return;
+    el.classList.remove("filled","over","magic","flash-green","flash-red");
+    el.textContent = String(i+1);
   });
-
-  const slot4 = document.querySelector('.sent-slot[data-slot="4"]');
-  slot4.style.display = hasInfo ? "flex" : "none";
 }
 
-function animateSlotTo(slotEl, newText){
-  slotEl.classList.remove("magic");
-  void slotEl.offsetWidth;
-  slotEl.classList.add("magic");
-  // quick swap mid-animation
-  setTimeout(()=>{ slotEl.textContent = newText; }, 170);
+function fillGivenRow(){
+  // Given sentence structure:
+  // AFF: Ech - verb(ech) - gär/net gär - info?  .
+  // Q  : Du  - verb(du)  - gär/net gär - info?  ?
+  const subj = (invModeGiven==="AFF") ? "Ech" : "Du";
+  const verb = (invModeGiven==="AFF") ? conjEch(invCurrent.verb) : conjDu(invCurrent.verb);
+
+  document.getElementById("given1").textContent = subj;
+  document.getElementById("given2").textContent = verb;
+  document.getElementById("given3").textContent = invCurrent.gar;
+
+  if(invNeedInfo){
+    document.getElementById("given4").textContent = invCurrent.info;
+  }
+
+  document.getElementById("givenPunct").textContent = (invModeGiven==="AFF") ? "." : "?";
+
+  // Captions
+  document.getElementById("givenCaption").textContent = (invModeGiven==="AFF") ? "Ginn Saz: Ausso" : "Ginn Saz: Fro";
+  document.getElementById("targetCaption").textContent = (invModeGiven==="AFF") ? "Du méchs: Fro" : "Du méchs: Ausso";
+
+  // Target punctuation
+  document.getElementById("targetPunct").textContent = (invModeGiven==="AFF") ? "?" : ".";
 }
 
-function removeOneTileFromBank(type, value){
-  const bank = document.getElementById("sentBank");
+function buildBankFromGiven(){
+  const bank = document.getElementById("invBank");
+  bank.innerHTML = "";
+
+  const subjText = (invModeGiven==="AFF") ? "Ech" : "Du";
+  const verbText = (invModeGiven==="AFF") ? conjEch(invCurrent.verb) : conjDu(invCurrent.verb);
+  const garText  = invCurrent.gar;
+
+  bank.appendChild(makeBankTile(subjText, "subj", "SUBJ"));
+  bank.appendChild(makeBankTile(verbText, "verb", "VERB"));
+  bank.appendChild(makeBankTile(garText,  "gar",  "GAR"));
+  if(invNeedInfo){
+    bank.appendChild(makeBankTile(invCurrent.info, "info", "INFO"));
+  }
+}
+
+function removeFromBank(token, value){
+  const bank = document.getElementById("invBank");
   const tiles = Array.from(bank.querySelectorAll(".word"));
-  const t = tiles.find(x => x.dataset.type === type && x.dataset.value === value);
+  const t = tiles.find(x => x.dataset.token===token && x.dataset.value===value);
   if(t) t.remove();
 }
 
-function invPlace(slotEl, type, value){
-  // only accept correct type in each slot
-  const accept = slotEl.dataset.accept;
-  if(type !== accept){
+function animTransform(slotEl, newText){
+  slotEl.classList.remove("magic");
+  void slotEl.offsetWidth;
+  slotEl.classList.add("magic");
+  setTimeout(()=>{ slotEl.textContent = newText; }, 170);
+}
+
+function expected
+Target form rules:
+- If given is AFF -> target is QUESTION, and we require:
+    1 = Ech
+    2 = verb in ECH form (magic transform after drop)
+    3 = gär (always gär in target; "net gär" -> "gär")
+    4 = info (if exists)    
+- If given is QUESTION -> target is AFF, and we require:
+    1 = Du
+    2 = verb in DU form (magic transform after drop)
+    3 = gär (always gär in target; also magic: "net gär" -> "gär")
+    4 = info (if exists)
+Important: placement is identical (1-4), only the subject/verb conjugation (and punctuation) switches.
+*/
+function expectedTarget(){
+  const targetIsQuestion = (invModeGiven==="AFF");
+  return {
+    isQuestion: targetIsQuestion,
+    subj: targetIsQuestion ? "Du" : "Ech",
+    verb: targetIsQuestion ? conjDu(invCurrent.verb) : conjEch(invCurrent.verb),
+    gar: "gär",
+    info: invNeedInfo ? invCurrent.info : null,
+    punct: targetIsQuestion ? "?" : "."
+  };
+}
+
+function invPlace(slotEl, slotNum, token, value){
+  // prevent overwriting
+  if(slotEl.classList.contains("filled")) return;
+
+  const exp = expectedTarget();
+
+  // determine what this slot should be
+  const slotRole = slotNum===1 ? "SUBJ" : slotNum===2 ? "VERB" : slotNum===3 ? "GAR" : "INFO";
+
+  if(token !== slotRole){
     flash(slotEl, "flash-red");
     invSetFeedback("Probéier nach eng Kéier.", false);
     return;
   }
 
-  // prevent overwriting
-  if(slotEl.classList.contains("filled")) return;
-
   slotEl.classList.add("filled");
   flash(slotEl, "flash-green");
 
-  if(type === "subj"){
-    slotEl.textContent = "Ech";
-    removeOneTileFromBank("subj", "Ech");
-    animateSlotTo(slotEl, "du");
-    sentState.subj = "du";
+  // Place + transform
+  if(token==="SUBJ"){
+    slotEl.textContent = value;                 // show what was dropped
+    removeFromBank("SUBJ", value);
+    animTransform(slotEl, exp.subj);            // magic to target subject
+    invPlaced[slotNum] = exp.subj;
   }
 
-  if(type === "verb"){
-    // value is ech-form already
+  if(token==="VERB"){
     slotEl.textContent = value;
-    removeOneTileFromBank("verb", value);
-    const duForm = conjDu(sentCurrent.verb);
-    animateSlotTo(slotEl, duForm);
-    sentState.verb = duForm;
+    removeFromBank("VERB", value);
+    animTransform(slotEl, exp.verb);            // magic to target conjugation
+    invPlaced[slotNum] = exp.verb;
   }
 
-  if(type === "gar"){
+  if(token==="GAR"){
     slotEl.textContent = value;
-    removeOneTileFromBank("gar", value);
-    animateSlotTo(slotEl, "gär");   // always gär
-    sentState.gar = "gär";
+    removeFromBank("GAR", value);
+    animTransform(slotEl, exp.gar);             // magic: always gär
+    invPlaced[slotNum] = exp.gar;
   }
 
-  if(type === "info"){
+  if(token==="INFO"){
     slotEl.textContent = value;
-    removeOneTileFromBank("info", value);
-    sentState.info = value;
+    removeFromBank("INFO", value);
+    invPlaced[slotNum] = value;
   }
 
   invCheckComplete();
 }
 
 function invCheckComplete(){
-  const needInfo = !!sentCurrent.info;
+  const exp = expectedTarget();
 
-  if(!sentState.subj || !sentState.verb || !sentState.gar) return;
-  if(needInfo && !sentState.info) return;
+  if(!invPlaced[1] || !invPlaced[2] || !invPlaced[3]) return;
+  if(invNeedInfo && !invPlaced[4]) return;
 
-  // Validate (info if needed)
-  if(needInfo && sentState.info !== sentCurrent.info){
-    invSetFeedback("Probéier nach eng Kéier.", false);
+  const ok =
+    invPlaced[1] === exp.subj &&
+    invPlaced[2] === exp.verb &&
+    invPlaced[3] === exp.gar &&
+    (!invNeedInfo || invPlaced[4] === exp.info);
+
+  if(!ok){
+    invSetFeedback("Nach net ganz. Kuck d’Plazéierung 1–4.", false);
     return;
   }
 
   invSetFeedback("Richteg!", true);
 
   setTimeout(()=>{
-    sentPos++;
-    if(sentPos >= sentOrder.length){
+    invPos++;
+    if(invPos >= invOrder.length){
       showModal("Bravo!", "Alles fäerdeg!", ()=>{
-        sentOrder = shuffle(SENT_EXAMPLES);
-        sentPos = 0;
-        invLoadSentence();
+        invOrder = shuffle(INV_EXAMPLES);
+        invPos = 0;
+        invLoadRound();
       });
     }else{
-      invLoadSentence();
+      invLoadRound();
     }
   }, 750);
 }
 
-function wireSentenceSlotsOnce(){
-  document.querySelectorAll(".sent-slot").forEach(slot=>{
+function wireInvSlotsOnce(){
+  if(window.__invWired) return;
+  ["t1","t2","t3","t4"].forEach((id, idx)=>{
+    const slot = document.getElementById(id);
+    if(!slot) return;
+
     slot.addEventListener("dragover", (e)=>{ e.preventDefault(); slot.classList.add("over"); });
     slot.addEventListener("dragleave", ()=> slot.classList.remove("over"));
     slot.addEventListener("drop", (e)=>{
       e.preventDefault();
       slot.classList.remove("over");
       const data = JSON.parse(e.dataTransfer.getData("text/plain"));
-      invPlace(slot, data.type, data.value);
+      invPlace(slot, idx+1, data.token, data.value);
     });
   });
+  window.__invWired = true;
 }
 
-function invLoadSentence(){
-  if(!window.__invSentenceWired){
-    wireSentenceSlotsOnce();
-    window.__invSentenceWired = true;
-  }
+function invLoadRound(){
+  wireInvSlotsOnce();
 
-  sentCurrent = sentOrder[sentPos];
-  document.getElementById("invProg").textContent = `${sentPos+1} / ${sentOrder.length}`;
+  invCurrent = invOrder[invPos];
+  invNeedInfo = !!invCurrent.info;
 
-  const hasInfo = !!sentCurrent.info;
-  resetSentenceSlots(hasInfo);
+  // Randomly decide whether given is affirmative or question
+  invModeGiven = (Math.random() < 0.5) ? "AFF" : "Q";
 
-  // Build the sentence bank in correct order:
-  // Ech - verb(1st pers sg) - gär/net gär - info?
-  const bank = document.getElementById("sentBank");
-  bank.innerHTML = "";
+  document.getElementById("invProg").textContent = `${invPos+1} / ${invOrder.length}`;
 
-  const echTile = makeWordTile("Ech", "subj", "subj");
-  const verbEch = conjEch(sentCurrent.verb);
-  const verbTile = makeWordTile(verbEch, "verb", "verb");
-  const garTile  = makeWordTile(sentCurrent.gar, "gar", "gar");
-
-  bank.appendChild(echTile);
-  bank.appendChild(verbTile);
-  bank.appendChild(garTile);
-
-  if(hasInfo){
-    bank.appendChild(makeWordTile(sentCurrent.info, "info", "info"));
-  }
+  clearTargetSlots(invNeedInfo);
+  fillGivenRow();
+  buildBankFromGiven();
 }
 
 document.getElementById("invReset").addEventListener("click", ()=>{
-  invLoadSentence();
+  invLoadRound();
 });
 document.getElementById("invNext").addEventListener("click", ()=>{
-  sentPos++;
-  if(sentPos >= sentOrder.length){
-    sentOrder = shuffle(SENT_EXAMPLES);
-    sentPos = 0;
+  invPos++;
+  if(invPos >= invOrder.length){
+    invOrder = shuffle(INV_EXAMPLES);
+    invPos = 0;
   }
-  invLoadSentence();
+  invLoadRound();
 });
 
 /* ===================== INIT ===================== */
