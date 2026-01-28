@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>P4 – Verben – Spiller</title>
+  <title>P4 – Verben (Spiller)</title>
 
   <style>
     /* FONT */
@@ -22,12 +22,14 @@
       --purple-dark:#6c4aa3;
       --ink:#2d1844;
       --white:#fff;
+      --ok:#b7f0c8;
+      --bad:#ffcccc;
 
-      /* Sentence colours */
-      --subj:#b7f0c8;   /* green */
-      --verb:#e6dcff;   /* purple-ish */
-      --gar:#ffd9c4;    /* orange */
-      --info:#dbefff;   /* blue */
+      /* Inversion colours (match your grammar sheet vibe) */
+      --inv-person:#d9edff; /* light blue */
+      --inv-verb:#e6dcff;   /* light purple */
+      --inv-gar:#ffd9c4;    /* peach */
+      --inv-info:#dbefff;   /* blue */
     }
 
     *{ margin:0; padding:0; box-sizing:border-box; }
@@ -48,25 +50,22 @@
     /* TOP BAR */
     .top-bar{
       max-width:1100px;
-      margin:0 auto 10px;
+      margin:0 auto 8px;
       display:flex;
       align-items:center;
       justify-content:space-between;
-      background:var(--purple-dark);
+      background:var(--purple-mid);
       border-radius:999px;
       padding:6px 12px;
       color:var(--white);
       gap:10px;
-      box-shadow: 0 10px 18px rgba(45,24,68,.12);
     }
     .top-bar-title{
-      font-size:1.45rem;
+      font-size:1.55rem;
       flex:1;
       text-align:center;
       min-height:1.4em;
-      opacity:.98;
-      padding:0 6px;
-      line-height:1.15;
+      opacity:.95;
     }
     .top-arrow{
       width:38px;
@@ -85,16 +84,24 @@
       max-width:1100px;
       margin:0 auto 14px;
       text-align:center;
-      font-size:1.2rem;
+      font-size:1.25rem;
       opacity:0.85;
     }
 
-    .games{ max-width:1100px; margin:0 auto; }
+    .games{
+      max-width:1100px;
+      margin:0 auto;
+    }
+
     .game{ display:none; }
     .game.active{ display:block; }
 
-    /* Titles handled by top bar */
-    h2{ display:none; }
+    h2{
+      font-size:1.55rem;
+      margin-bottom:8px;
+      text-align:center;
+      color:var(--purple-dark);
+    }
 
     .instruction-box{
       background:var(--white);
@@ -126,7 +133,7 @@
     .secondary{
       padding:8px 14px;
       border-radius:999px;
-      border:2px solid rgba(108,74,163,.25);
+      border:2px solid var(--purple-mid);
       background:white;
       color:var(--ink);
       font-size:1.15rem;
@@ -148,7 +155,7 @@
     .feedback.ok{ color:#117a3a; }
     .feedback.bad{ color:#b02323; }
 
-    /* Prompt box */
+    /* ===== Prompt box ===== */
     .big-box{
       width:min(860px, 100%);
       background:var(--white);
@@ -158,13 +165,15 @@
       text-align:center;
       margin: 0 auto;
     }
+
+    /* single prompt line: "spillen, du" */
     .promptLine{
       font-size:2.75rem;
       color:var(--purple-dark);
       line-height:1.1;
     }
 
-    /* Choice buttons */
+    /* ===== Choice buttons ===== */
     .choices{
       display:flex;
       justify-content:center;
@@ -195,7 +204,7 @@
       100%{ box-shadow:none; }
     }
 
-    /* Mini table */
+    /* ===== Mini table ===== */
     table{
       width: min(860px, 100%);
       margin: 0 auto;
@@ -215,8 +224,12 @@
       background: rgba(183,162,229,.35);
       color: var(--ink);
     }
-    .cell-green{ background: rgba(183,240,200,.55); }
-    .cell-red{ background: rgba(255,204,204,.35); }
+    .cell-green{
+      background: rgba(183,240,200,.55);
+    }
+    .cell-red{
+      background: rgba(255,204,204,.35);
+    }
     select{
       padding:8px 10px;
       border-radius:12px;
@@ -225,7 +238,7 @@
       font-size:1.25rem;
     }
 
-    /* Build from parts */
+    /* ===== Build from parts ===== */
     .parts{
       width:min(900px, 100%);
       margin: 0 auto;
@@ -275,108 +288,65 @@
       font-size:2.0rem;
     }
 
-    /* Sentence inversion game */
-    .sent-area{
+    /* ===== Inversion game ===== */
+    .drag-bank{
       width:min(980px, 100%);
-      margin: 0 auto;
-    }
-
-    .sent-caption{
-      text-align:center;
-      font-size:1.25rem;
-      opacity:.85;
-      margin: 4px 0 8px;
-    }
-
-    .sent-row{
-      display:flex;
-      justify-content:center;
-      align-items:flex-end;
-      gap:12px;
-      flex-wrap:wrap;
-      margin: 0 auto 10px;
-    }
-
-    .slotStack{
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      gap:6px;
-      min-width: 160px;
-    }
-
-    .sent-slot{
-      width: 100%;
-      min-height:76px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      text-align:center;
-      border-radius:18px;
-      border:2px dashed rgba(108,74,163,.45);
-      background: var(--white);
-      padding:10px;
-      font-size:1.55rem;
-      user-select:none;
-    }
-
-    .sent-slot.locked{
-      border-style:solid;
-      border-color: rgba(108,74,163,.18);
-      opacity:.95;
-    }
-
-    .sent-slot.over{
-      outline:4px solid rgba(108,74,163,.18);
-      outline-offset:2px;
-    }
-    .sent-slot.filled{ border-style:solid; }
-
-    .posnum{
-      font-size:1.15rem;
-      opacity:.7;
-    }
-
-    .punct{
-      font-size:2.2rem;
-      color: var(--purple-dark);
-      padding: 0 2px 10px;
-      line-height:1;
-    }
-
-    .bank{
-      width:min(980px, 100%);
-      margin: 12px auto 14px;
+      margin: 0 auto 14px;
       display:flex;
       justify-content:center;
       flex-wrap:wrap;
-      gap:12px;
+      gap:10px;
     }
-
-    .word{
-      padding:12px 18px;
+    .drag{
+      padding:12px 16px;
       border-radius:18px;
-      font-size:1.55rem;
+      font-size:1.35rem;
       border:2px solid rgba(0,0,0,.08);
       user-select:none;
       cursor:grab;
-      background: var(--white);
     }
-    .word:active{ transform:scale(.98); }
+    .drag:active{ transform:scale(.98); }
+    .drag.verb{ background:var(--inv-verb); }
+    .drag.person{ background:var(--inv-person); }
+    .drag.gar{ background:var(--inv-gar); }
+    .drag.info{ background:var(--inv-info); }
 
-    .subj{ background: var(--subj); }
-    .verb{ background: var(--verb); }
-    .gar { background: var(--gar); }
-    .info{ background: var(--info); }
+    .inv-zones{
+      width:min(980px, 100%);
+      margin: 0 auto;
+      display:grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap:10px;
+    }
+    .inv-slot{
+      background:var(--white);
+      border-radius:18px;
+      border:2px dashed rgba(108,74,163,.45);
+      min-height:72px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:1.45rem;
+      text-align:center;
+      padding:8px;
+    }
+    .inv-slot.over{
+      outline:4px solid rgba(108,74,163,.18);
+      outline-offset:2px;
+    }
+    .inv-slot.filled{
+      border-style:solid;
+    }
 
-    .magic{
-      animation: magicPop .45s ease;
+    .inv-chip{
+      border-radius:14px;
+      padding:10px 12px;
+      display:inline-block;
     }
-    @keyframes magicPop{
-      0%   { transform:scale(1); filter:brightness(1); }
-      35%  { transform:scale(1.10); filter:brightness(1.18); }
-      100% { transform:scale(1); filter:brightness(1); }
-    }
+    .inv-chip.verb{ background:var(--inv-verb); }
+    .inv-chip.person{ background:var(--inv-person); }
+    .inv-chip.gar{ background:var(--inv-gar); }
+    .inv-chip.info{ background:var(--inv-info); }
 
     /* Modal */
     .overlay{
@@ -417,13 +387,14 @@
     <button class="top-arrow" id="nextBtn" aria-label="Nächst Spill">›</button>
   </div>
 
-  <div class="subtitle">P4 – Verben – Konjugéieren</div>
+  <div class="subtitle">P4 – Verben (Konjugéieren)</div>
 
   <div class="games">
 
+    <!-- G1 Oral -->
     <section class="game active" id="g1">
-      <h2>Konjugéieren mëndlech</h2>
-      <div class="instruction-box">Kuck d’Form a konjugéier. Keng Kontroll.</div>
+      <h2>Konjugéieren (mëndlech)</h2>
+      <div class="instruction-box">Kuck d’Form a konjugéier (mëndlech). Keng Kontroll.</div>
       <div class="row-center">
         <button class="primary" id="g1Next">Nächst</button>
         <button class="secondary" id="g1Mix">Nei mixen</button>
@@ -434,9 +405,10 @@
       </div>
     </section>
 
+    <!-- G2: Build from parts -->
     <section class="game" id="g9">
-      <h2>Bauen Stamm an Endung</h2>
-      <div class="instruction-box">Wiel e Stamm an eng Endung. Du kanns probéieren.</div>
+      <h2>Bauen: Stamm + Endung</h2>
+      <div class="instruction-box">Wiel e Stamm an eng Endung. Du kanns probéieren (och falsch).</div>
       <div class="row-center">
         <button class="secondary" id="g9Mix">Nei mixen</button>
         <button class="primary" id="g9Check">Kontrolléieren</button>
@@ -462,9 +434,10 @@
       <div class="feedback" id="g9Fb"></div>
     </section>
 
+    <!-- G3: Change type -->
     <section class="game" id="g2">
       <h2>Stamm, Endung, Näischt, déi zwee</h2>
-      <div class="instruction-box">Hei steet schonn d’konjugéiert Form. Wat ännert sech am Verglach mam Infinitiv.</div>
+      <div class="instruction-box">Hei steet schonn d’konjugéiert Form. Wat ännert sech am Verglach mam Infinitiv?</div>
       <div class="row-center">
         <button class="secondary" id="g2Mix">Nei mixen</button>
         <div class="pill" id="g2Prog">1 / …</div>
@@ -481,8 +454,9 @@
       <div class="feedback" id="g2Fb"></div>
     </section>
 
+    <!-- G4: MCQ -->
     <section class="game" id="g3">
-      <h2>Richteg Form 3 Optiounen</h2>
+      <h2>Richteg Form (3 Optiounen)</h2>
       <div class="instruction-box">Wiel déi richteg konjugéiert Form.</div>
       <div class="row-center">
         <button class="secondary" id="g3Mix">Nei mixen</button>
@@ -495,9 +469,10 @@
       <div class="feedback" id="g3Fb"></div>
     </section>
 
+    <!-- G5: Fill red cells (each verb once, then auto next game) -->
     <section class="game" id="g5">
       <h2>Fëll d’rout Felder</h2>
-      <div class="instruction-box">Fëll just du, hien-hatt, dir. Klick Kontrolléieren. All Verb kënnt just eemol.</div>
+      <div class="instruction-box">Fëll just: du / hien-hatt / dir. Klick “Kontrolléieren”. (All Verb kënnt just eemol.)</div>
       <div class="row-center">
         <button class="secondary" id="g5NextVerb">Nächst Verb</button>
         <button class="primary" id="g5Check">Kontrolléieren</button>
@@ -514,9 +489,10 @@
       <div class="feedback" id="g5Fb"></div>
     </section>
 
+    <!-- G6: Race -->
     <section class="game" id="g7">
-      <h2>Konjugatiouns Race</h2>
-      <div class="instruction-box">Soen et aus. Klick Äntwert weisen fir d’Léisung.</div>
+      <h2>Konjugatiouns-Race</h2>
+      <div class="instruction-box">Soen et aus. Klick “Äntwert weisen” fir d’Léisung (wann néideg).</div>
       <div class="row-center">
         <button class="primary" id="g7Next">Nächst</button>
         <button class="secondary" id="g7Show">Äntwert weisen</button>
@@ -529,9 +505,10 @@
       </div>
     </section>
 
+    <!-- G7: Fix the mistake -->
     <section class="game" id="g8">
       <h2>Feeler verbesseren</h2>
-      <div class="instruction-box">Wiel déi richteg Form. Dat anert ass falsch.</div>
+      <div class="instruction-box">Wiel déi richteg Form (dat anert ass falsch).</div>
       <div class="row-center">
         <button class="secondary" id="g8Mix">Nei mixen</button>
         <div class="pill" id="g8Prog">1 / …</div>
@@ -544,10 +521,10 @@
       <div class="feedback" id="g8Fb"></div>
     </section>
 
-    <!-- Inversion game -->
+    <!-- G8: Inversion with "gär" -->
     <section class="game" id="gInv">
-      <h2>Sazstruktur Inversioun</h2>
-      <div class="instruction-box">Uewen ass de ginnene Saz. Drënner stell d’Wierder esou ëm, datt déi aner Form entsteet. D’Punktuatioun steet nieft de Këschten.</div>
+      <h2>Inversioun – gär</h2>
+      <div class="instruction-box">Zéi d’Wierder an déi richteg Reiefolleg (1–4) fir eng Fro ze bauen.</div>
 
       <div class="row-center">
         <button class="secondary" id="invReset">Reset</button>
@@ -555,55 +532,16 @@
         <div class="pill" id="invProg">1 / …</div>
       </div>
 
-      <div class="sent-area">
-        <div class="sent-caption" id="givenCaption">Ginn Saz</div>
+      <div class="drag-bank" id="invBank"></div>
 
-        <div class="sent-row" id="givenRow">
-          <div class="slotStack">
-            <div class="sent-slot locked" id="given1"></div>
-            <div class="posnum">1</div>
-          </div>
-          <div class="slotStack">
-            <div class="sent-slot locked" id="given2"></div>
-            <div class="posnum">2</div>
-          </div>
-          <div class="slotStack">
-            <div class="sent-slot locked" id="given3"></div>
-            <div class="posnum">3</div>
-          </div>
-          <div class="slotStack" id="givenStack4">
-            <div class="sent-slot locked" id="given4"></div>
-            <div class="posnum">4</div>
-          </div>
-          <div class="punct" id="givenPunct">.</div>
-        </div>
-
-        <div class="sent-caption" id="targetCaption">Du méchs déi aner Form</div>
-
-        <div class="sent-row" id="targetRow">
-          <div class="slotStack">
-            <div class="sent-slot" data-slot="1" id="t1"></div>
-            <div class="posnum">1</div>
-          </div>
-          <div class="slotStack">
-            <div class="sent-slot" data-slot="2" id="t2"></div>
-            <div class="posnum">2</div>
-          </div>
-          <div class="slotStack">
-            <div class="sent-slot" data-slot="3" id="t3"></div>
-            <div class="posnum">3</div>
-          </div>
-          <div class="slotStack" id="targetStack4">
-            <div class="sent-slot" data-slot="4" id="t4"></div>
-            <div class="posnum">4</div>
-          </div>
-          <div class="punct" id="targetPunct">?</div>
-        </div>
-
-        <div class="bank" id="invBank"></div>
-
-        <div class="feedback" id="invFeedback"></div>
+      <div class="inv-zones">
+        <div class="inv-slot" data-slot="1" id="invSlot1">1</div>
+        <div class="inv-slot" data-slot="2" id="invSlot2">2</div>
+        <div class="inv-slot" data-slot="3" id="invSlot3">3</div>
+        <div class="inv-slot" data-slot="4" id="invSlot4">4</div>
       </div>
+
+      <div class="feedback" id="invFeedback"></div>
     </section>
 
   </div>
@@ -617,7 +555,59 @@
   </div>
 
 <script>
-/* ===================== HELPERS ===================== */
+/* ===================== CONJUGATION DATA ===================== */
+const PERSONS = [
+  {k:"ech", label:"ech"},
+  {k:"du", label:"du"},
+  {k:"hienhatt", label:"hien/hatt"},
+  {k:"mir", label:"mir"},
+  {k:"dir", label:"dir"},
+  {k:"si", label:"si"}
+];
+
+// irregulars from your worksheet (explicit)
+const IRREG_EXPLICIT = {
+  "fueren":   { ech:"fueren", du:"fiers", hienhatt:"fiert", mir:"fueren", dir:"fuert", si:"fueren" },
+  "danzen":   { ech:"danzen", du:"danz",  hienhatt:"danzt", mir:"danzen", dir:"danzt", si:"danzen" },
+  "liesen":   { ech:"liesen", du:"lies",  hienhatt:"liest", mir:"liesen", dir:"liest", si:"liesen" },
+  "schwammen":{ ech:"schwammen", du:"schwëmms", hienhatt:"schwëmmt", mir:"schwammen", dir:"schwammt", si:"schwammen" },
+  "molen":    { ech:"molen", du:"mools", hienhatt:"moolt", mir:"molen", dir:"moolt", si:"molen" },
+  "lafen":    { ech:"lafen", du:"leefs", hienhatt:"leeft", mir:"lafen", dir:"laaft", si:"lafen" },
+  "maachen":  { ech:"maachen", du:"méchs", hienhatt:"mécht", mir:"maachen", dir:"maacht", si:"maachen" },
+  "spillen":  { ech:"spillen", du:"spills", hienhatt:"spillt", mir:"spillen", dir:"spillt", si:"spillen" }
+};
+
+// regulars (conjugate like spillen)
+const REGULAR = ["lauschteren","kucken","boxen","kachen","léieren","raschten","spadséieren","telefonéieren"];
+
+function stemOf(inf){
+  if(inf.endsWith("en")) return inf.slice(0,-2);
+  return inf;
+}
+function conjRegular(inf){
+  const st = stemOf(inf);
+  return {
+    ech: st + "en",
+    du: st + "s",
+    hienhatt: st + "t",
+    mir: st + "en",
+    dir: st + "t",
+    si: st + "en"
+  };
+}
+
+// Build master verbs list with forms
+const VERBS = [];
+Object.keys(IRREG_EXPLICIT).forEach(v=>{
+  VERBS.push({inf:v, forms: IRREG_EXPLICIT[v], type: (v==="spillen") ? "regular" : "irregular"});
+});
+REGULAR.forEach(v=>{
+  VERBS.push({inf:v, forms: conjRegular(v), type:"regular"});
+});
+
+// stem-change verbs
+const STEM_CHANGE = new Set(["fueren","schwammen","molen","lafen","maachen"]); // danzen/liesen treated as ending-only
+
 function shuffle(arr){
   const a = arr.slice();
   for(let i=a.length-1;i>0;i--){
@@ -627,9 +617,10 @@ function shuffle(arr){
   return a;
 }
 function randInt(n){ return Math.floor(Math.random()*n); }
+function pick(arr){ return arr[randInt(arr.length)]; }
 
 function flash(el, cls){
-  el.classList.remove("flash-green","flash-red","magic");
+  el.classList.remove("flash-green","flash-red");
   void el.offsetWidth;
   el.classList.add(cls);
 }
@@ -644,60 +635,6 @@ function clearFb(id){
   el.className = "feedback";
 }
 
-/* ===================== CONJUGATION DATA ===================== */
-const PERSONS = [
-  {k:"ech", label:"ech"},
-  {k:"du", label:"du"},
-  {k:"hienhatt", label:"hien/hatt"},
-  {k:"mir", label:"mir"},
-  {k:"dir", label:"dir"},
-  {k:"si", label:"si"}
-];
-
-const IRREG_EXPLICIT = {
-  "fueren":   { ech:"fueren", du:"fiers", hienhatt:"fiert", mir:"fueren", dir:"fuert", si:"fueren" },
-  "danzen":   { ech:"danzen", du:"danz",  hienhatt:"danzt", mir:"danzen", dir:"danzt", si:"danzen" },
-  "liesen":   { ech:"liesen", du:"lies",  hienhatt:"liest", mir:"liesen", dir:"liest", si:"liesen" },
-  "schwammen":{ ech:"schwammen", du:"schwëmms", hienhatt:"schwëmmt", mir:"schwammen", dir:"schwammt", si:"schwammen" },
-  "molen":    { ech:"molen", du:"mools", hienhatt:"moolt", mir:"molen", dir:"moolt", si:"molen" },
-  "lafen":    { ech:"lafen", du:"leefs", hienhatt:"leeft", mir:"lafen", dir:"laaft", si:"lafen" },
-  "maachen":  { ech:"maachen", du:"méchs", hienhatt:"mécht", mir:"maachen", dir:"maacht", si:"maachen" },
-  "spillen":  { ech:"spillen", du:"spills", hienhatt:"spillt", mir:"spillen", dir:"spillt", si:"spillen" }
-};
-
-const REGULAR = ["lauschteren","kucken","boxen","kachen","léieren","raschten","spadséieren","telefonéieren"];
-
-function stemOf(inf){
-  if(inf.endsWith("en")) return inf.slice(0,-2);
-  return inf;
-}
-function conjRegular(inf){
-  const st = stemOf(inf);
-  return { ech: st+"en", du: st+"s", hienhatt: st+"t", mir: st+"en", dir: st+"t", si: st+"en" };
-}
-
-const VERBS = [];
-Object.keys(IRREG_EXPLICIT).forEach(v=>{
-  VERBS.push({inf:v, forms: IRREG_EXPLICIT[v]});
-});
-REGULAR.forEach(v=>{
-  VERBS.push({inf:v, forms: conjRegular(v)});
-});
-
-const STEM_CHANGE = new Set(["fueren","schwammen","molen","lafen","maachen"]);
-
-function getVerb(inf){ return VERBS.find(v=>v.inf===inf); }
-function correctForm(inf, personKey){
-  const v = getVerb(inf);
-  return v.forms[personKey];
-}
-function personLabel(k){
-  return PERSONS.find(p=>p.k===k).label;
-}
-function promptText(inf, personKey){
-  return `${inf}, ${personLabel(personKey)}`;
-}
-
 /* ===================== MODAL ===================== */
 const overlay = document.getElementById("overlay");
 function showModal(title, text, onClick){
@@ -710,25 +647,17 @@ function showModal(title, text, onClick){
   };
 }
 
-/* ===================== NAV + TOP TITLES ===================== */
+/* ===================== NAV ===================== */
 const gameEls = Array.from(document.querySelectorAll(".game"));
-const GAME_TITLES = [
-  "1. Konjugéieren mëndlech",
-  "2. Bauen Stamm an Endung",
-  "3. Stamm, Endung, Näischt, déi zwee",
-  "4. Richteg Form 3 Optiounen",
-  "5. Fëll d’rout Felder",
-  "6. Konjugatiouns Race",
-  "7. Feeler verbesseren",
-  "8. Sazstruktur Inversioun"
-];
 let gameIndex = 0;
 
 function showGame(idx){
   gameEls.forEach((g,i)=>g.classList.toggle("active", i===idx));
   gameIndex = idx;
-  document.getElementById("topTitle").textContent = GAME_TITLES[idx] || "";
+  document.getElementById("topTitle").textContent = "";
 
+  // order:
+  // 0 g1, 1 g9, 2 g2, 3 g3, 4 g5, 5 g7, 6 g8, 7 gInv
   if(idx===0) g1Render();
   if(idx===1) g9Render();
   if(idx===2) g2Render();
@@ -736,7 +665,7 @@ function showGame(idx){
   if(idx===4) g5Render();
   if(idx===5) g7Render(true);
   if(idx===6) g8Render();
-  if(idx===7) invLoadRound();
+  if(idx===7) invRender();
 }
 
 document.getElementById("prevBtn").addEventListener("click", ()=>{
@@ -745,6 +674,19 @@ document.getElementById("prevBtn").addEventListener("click", ()=>{
 document.getElementById("nextBtn").addEventListener("click", ()=>{
   showGame((gameIndex + 1) % gameEls.length);
 });
+
+/* ===================== HELPERS ===================== */
+function getVerb(inf){ return VERBS.find(v=>v.inf===inf); }
+function correctForm(inf, personKey){
+  const v = getVerb(inf);
+  return v.forms[personKey];
+}
+function personLabel(k){
+  return PERSONS.find(p=>p.k===k).label;
+}
+function promptText(inf, personKey){
+  return `${inf}, ${personLabel(personKey)}`;
+}
 
 /* ===================== DECKS ===================== */
 function buildPersonVerbDeck(){
@@ -757,7 +699,7 @@ function buildPersonVerbDeck(){
   return shuffle(deck);
 }
 
-/* ===================== G1 ===================== */
+/* ===================== G1 Oral ===================== */
 let g1Deck = buildPersonVerbDeck();
 let g1Pos = 0;
 
@@ -777,7 +719,7 @@ document.getElementById("g1Mix").addEventListener("click", ()=>{
   g1Render();
 });
 
-/* ===================== WRONG FORM MAKERS ===================== */
+/* ===================== COMMON WRONG FORM MAKERS ===================== */
 function makeEndingMistake(form){
   if(form.endsWith("en")) return form.slice(0,-2) + "t";
   if(form.endsWith("t")) return form.slice(0,-1) + "en";
@@ -797,7 +739,7 @@ function makeStemMistake(inf, personKey){
   return makeEndingMistake(correct);
 }
 
-/* ===================== G9 Build from parts ===================== */
+/* ===================== G9 Build from parts (stems improved) ===================== */
 let g9Deck = buildPersonVerbDeck();
 let g9Pos = 0;
 let g9SelStem = null;
@@ -845,14 +787,18 @@ function vowelDouble(stem){
 function makeImaginaryStems(baseStem, avoidSet, needCount){
   const fakes = [];
   const tries = [];
+
   const s1 = vowelSwap(baseStem);
   if(s1) tries.push(s1);
+
   const s2 = vowelDouble(baseStem);
   if(s2) tries.push(s2);
+
   if(s1){
     const s3 = vowelDouble(s1);
     if(s3) tries.push(s3);
   }
+
   tries.push(baseStem + "h");
   tries.push(baseStem + "n");
 
@@ -866,8 +812,6 @@ function makeImaginaryStems(baseStem, avoidSet, needCount){
   }
   return fakes;
 }
-
-/* ====== CONTINUE FROM HERE ====== */
 function possibleRealStems(inf, pk){
   const v = getVerb(inf);
   const stemCorrect = splitStemEnd(inf, pk).stem;
@@ -882,19 +826,25 @@ function buildStemOptions(inf, pk, targetCount=4){
   const real = possibleRealStems(inf, pk);
   const avoid = new Set(real);
   let stems = real.slice(0);
+
   if(stems.length < targetCount){
     const base = stems[0] || stemOf(inf) || inf;
     const fakes = makeImaginaryStems(base, avoid, targetCount - stems.length);
     stems = stems.concat(fakes);
   }
+
   const correctStem = splitStemEnd(inf, pk).stem;
   if(!stems.includes(correctStem)){
     stems.unshift(correctStem);
     stems = uniqueKeepOrder(stems);
   }
+
   stems = uniqueKeepOrder(stems).slice(0, targetCount);
   stems = shuffle(stems);
-  if(!stems.includes(correctStem)) stems[0] = correctStem;
+
+  if(!stems.includes(correctStem)){
+    stems[0] = correctStem;
+  }
   return stems;
 }
 
@@ -911,6 +861,7 @@ function g9Render(){
   const parts = splitStemEnd(item.inf, item.personKey);
 
   const stems = buildStemOptions(item.inf, item.personKey, 4);
+
   let ends = shuffle(Array.from(new Set([parts.end, "en", "t", "s", ""]))).slice(0,4);
   if(!ends.includes(parts.end)) ends[0]=parts.end;
 
@@ -941,6 +892,7 @@ function g9Render(){
     const t = document.createElement("div");
     t.className = "tile";
     t.textContent = e==="" ? "∅" : ("-" + e);
+    t.dataset.end = e;
     t.onclick = ()=>{
       Array.from(endWrap.querySelectorAll(".tile")).forEach(x=>x.classList.remove("selected"));
       t.classList.add("selected");
@@ -1033,6 +985,7 @@ function g3Render(){
   document.getElementById("g3Prompt").textContent = promptText(item.inf, item.personKey);
 
   const correct = correctForm(item.inf, item.personKey);
+
   let d1 = makeEndingMistake(correct);
   let d2 = makeStemMistake(item.inf, item.personKey);
 
@@ -1063,7 +1016,7 @@ document.getElementById("g3Mix").addEventListener("click", ()=>{
   g3Render();
 });
 
-/* ===================== G5 Fill red cells ===================== */
+/* ===================== G5 Fill red cells (each verb once) ===================== */
 let g5VerbDeck = shuffle(VERBS.map(v=>v.inf));
 let g5VerbPos = 0;
 let g5Verb = g5VerbDeck[g5VerbPos];
@@ -1071,6 +1024,7 @@ let g5Verb = g5VerbDeck[g5VerbPos];
 function g5UpdateProg(){
   document.getElementById("g5Prog").textContent = `${g5VerbPos+1} / ${g5VerbDeck.length}`;
 }
+
 function g5Render(){
   clearFb("g5Fb");
   g5Verb = g5VerbDeck[g5VerbPos];
@@ -1116,16 +1070,18 @@ function g5Render(){
     body.appendChild(tr);
   });
 }
+
 function g5AdvanceOrFinish(){
   g5VerbPos++;
   if(g5VerbPos >= g5VerbDeck.length){
-    showModal("Bravo!", "Du hues all Verben gemaach!", ()=>{
+    showModal("Bravo!", "Du hues all Verben am Spill gemaach!", ()=>{
       showGame((gameIndex + 1) % gameEls.length);
     });
     return;
   }
   g5Render();
 }
+
 document.getElementById("g5Check").addEventListener("click", ()=>{
   const v = getVerb(g5Verb);
   const selects = Array.from(document.querySelectorAll("#g5Body select"));
@@ -1184,6 +1140,7 @@ function makeWrongForm(inf, pk){
   const wrongB = makeStemMistake(inf, pk);
   return shuffle([wrongA, wrongB])[0];
 }
+
 function g8Render(){
   clearFb("g8Fb");
   const item = g8Deck[g8Pos];
@@ -1217,290 +1174,203 @@ document.getElementById("g8Mix").addEventListener("click", ()=>{
   g8Render();
 });
 
-/* ===================== GInv Sentence Inversion ===================== */
+/* ===================== Inversion – gär ===================== */
 /*
-Goal:
-- Given sentence shown (locked) is either affirmative (Ech ...) OR question (Du ... ?).
-- Bank contains the words of the GIVEN sentence.
-- Students must arrange them into the OTHER form (same slots/positions shown 1–4).
-- Verb "magically" transforms:
-    * Target affirmative => verb becomes ech-form
-    * Target question   => verb becomes du-form
-- Subject also changes between Ech/du accordingly.
-- Punctuation is OUTSIDE boxes and aligned with the sentence row.
+Slots:
+1 = Verb (conjugated)
+2 = Person (du/hien/hatt/dir)
+3 = gär (net gär becomes gär when dropped)
+4 = Information (optional)
 */
 
+const INV_PERSONS = ["du","hien","hatt","dir"];
 const INV_EXAMPLES = [
-  { verb:"spillen", gar:"gär", info:"Fussball" },
-  { verb:"kucken", gar:"net gär", info:"Tëlee" },
-  { verb:"lauschteren", gar:"gär", info:"Musek" },
-  { verb:"liesen", gar:"gär", info:null },
-  { verb:"schwammen", gar:"net gär", info:null },
-  { verb:"danzen", gar:"gär", info:null },
-  { verb:"lafen", gar:"gär", info:null },
-  { verb:"maachen", gar:"net gär", info:"Sport" },
-  { verb:"telefonéieren", gar:"gär", info:null },
-  { verb:"raschten", gar:"net gär", info:null },
-  { verb:"kachen", gar:"gär", info:null },
-  { verb:"spadséieren", gar:"gär", info:null },
-  { verb:"molen", gar:"net gär", info:null },
-  { verb:"léieren", gar:"gär", info:null },
-  { verb:"boxen", gar:"net gär", info:null }
+  { verb:"schwammen", info:null },
+  { verb:"spillen", info:"Fussball" },
+  { verb:"liesen", info:null },
+  { verb:"kucken", info:"Tëlee" },
+  { verb:"danzen", info:null },
+  { verb:"lauschteren", info:"Musek" }
 ];
 
 let invOrder = shuffle(INV_EXAMPLES);
 let invPos = 0;
-let invCurrent = null;
 
-let invModeGiven = "AFF"; // "AFF" or "Q"
-let invNeedInfo = false;
+let invChosen = null;
+let invState = { verbInf:null, person:null, gar:null, info:null };
 
-let invPlaced = {1:null,2:null,3:null,4:null}; // store placed token types
-
-function invClearFeedback(){
-  const el = document.getElementById("invFeedback");
-  el.textContent = "";
-  el.className = "feedback";
+function invSetSlot(slotEl, type, text){
+  slotEl.classList.add("filled");
+  slotEl.innerHTML = `<span class="inv-chip ${type}">${text}</span>`;
 }
-function invSetFeedback(text, ok){
-  const el = document.getElementById("invFeedback");
-  el.textContent = text;
-  el.className = "feedback " + (ok ? "ok" : "bad");
-}
-
-function conjEch(inf){ return correctForm(inf, "ech"); }
-function conjDu(inf){ return correctForm(inf, "du"); }
-
-function makeBankTile(text, cls, token){
-  const w = document.createElement("div");
-  w.className = `word ${cls}`;
-  w.textContent = text;
-  w.draggable = true;
-  w.dataset.token = token; // "SUBJ" | "VERB" | "GAR" | "INFO"
-  w.dataset.value = text;
-  w.addEventListener("dragstart", (e)=>{
-    e.dataTransfer.setData("text/plain", JSON.stringify({token, value:text}));
-  });
-  return w;
-}
-
-function clearTargetSlots(hasInfo){
-  invPlaced = {1:null,2:null,3:null,4:null};
-  invClearFeedback();
-
-  const t4Stack = document.getElementById("targetStack4");
-  const g4Stack = document.getElementById("givenStack4");
-  t4Stack.style.display = hasInfo ? "flex" : "none";
-  g4Stack.style.display = hasInfo ? "flex" : "none";
-
-  // reset slot text
-  ["t1","t2","t3","t4"].forEach((id, i)=>{
+function invResetSlots(){
+  invState = { verbInf:null, person:null, gar:null, info:null };
+  ["invSlot1","invSlot2","invSlot3","invSlot4"].forEach((id)=>{
     const el = document.getElementById(id);
-    if(!el) return;
-    el.classList.remove("filled","over","magic","flash-green","flash-red");
-    el.textContent = String(i+1);
+    el.classList.remove("filled","over","flash-green","flash-red");
+    el.textContent = el.dataset.slot;
+    el.dataset.type = "";
   });
+  clearFb("invFeedback");
 }
 
-function fillGivenRow(){
-  // Given sentence structure:
-  // AFF: Ech - verb(ech) - gär/net gär - info?  .
-  // Q  : Du  - verb(du)  - gär/net gär - info?  ?
-  const subj = (invModeGiven==="AFF") ? "Ech" : "Du";
-  const verb = (invModeGiven==="AFF") ? conjEch(invCurrent.verb) : conjDu(invCurrent.verb);
+function invMakeTile(text, cls, type){
+  const d = document.createElement("div");
+  d.className = `drag ${cls}`;
+  d.textContent = text;
+  d.draggable = true;
+  d.dataset.type = type;
+  d.dataset.value = text;
+  d.addEventListener("dragstart", (e)=>{
+    e.dataTransfer.setData("text/plain", JSON.stringify({type, value:text}));
+  });
+  return d;
+}
 
-  document.getElementById("given1").textContent = subj;
-  document.getElementById("given2").textContent = verb;
-  document.getElementById("given3").textContent = invCurrent.gar;
+function invConjugate(inf, personLabel){
+  // use existing data where possible, with mapping person->personKey
+  const mapPersonKey = { "du":"du", "hien":"hienhatt", "hatt":"hienhatt", "dir":"dir" };
 
-  if(invNeedInfo){
-    document.getElementById("given4").textContent = invCurrent.info;
+  // if verb exists in VERBS list:
+  const v = getVerb(inf);
+  if(v){
+    const pk = mapPersonKey[personLabel];
+    return v.forms[pk];
   }
 
-  document.getElementById("givenPunct").textContent = (invModeGiven==="AFF") ? "." : "?";
-
-  // Captions
-  document.getElementById("givenCaption").textContent = (invModeGiven==="AFF") ? "Ginn Saz: Ausso" : "Ginn Saz: Fro";
-  document.getElementById("targetCaption").textContent = (invModeGiven==="AFF") ? "Du méchs: Fro" : "Du méchs: Ausso";
-
-  // Target punctuation
-  document.getElementById("targetPunct").textContent = (invModeGiven==="AFF") ? "?" : ".";
+  // fallback (shouldn't happen)
+  return inf;
 }
 
-function buildBankFromGiven(){
+function invLoad(){
+  invChosen = invOrder[invPos];
+  document.getElementById("invProg").textContent = `${invPos+1} / ${invOrder.length}`;
+
   const bank = document.getElementById("invBank");
   bank.innerHTML = "";
+  invResetSlots();
 
-  const subjText = (invModeGiven==="AFF") ? "Ech" : "Du";
-  const verbText = (invModeGiven==="AFF") ? conjEch(invCurrent.verb) : conjDu(invCurrent.verb);
-  const garText  = invCurrent.gar;
+  // Tiles (top bank)
+  bank.appendChild(invMakeTile(invChosen.verb, "verb", "verb"));
+  INV_PERSONS.forEach(p=> bank.appendChild(invMakeTile(p, "person", "person")));
+  bank.appendChild(invMakeTile("gär", "gar", "gar"));
+  bank.appendChild(invMakeTile("net gär", "gar", "gar"));
+  if(invChosen.info) bank.appendChild(invMakeTile(invChosen.info, "info", "info"));
+}
 
-  bank.appendChild(makeBankTile(subjText, "subj", "SUBJ"));
-  bank.appendChild(makeBankTile(verbText, "verb", "VERB"));
-  bank.appendChild(makeBankTile(garText,  "gar",  "GAR"));
-  if(invNeedInfo){
-    bank.appendChild(makeBankTile(invCurrent.info, "info", "INFO"));
+function invTryUpdateConjugatedVerb(){
+  // If verb + person are both set, update slot1 with conjugated form
+  if(invState.verbInf && invState.person){
+    const slot1 = document.getElementById("invSlot1");
+    const conj = invConjugate(invState.verbInf, invState.person);
+    invSetSlot(slot1, "verb", conj);
+    slot1.dataset.type = "verb";
   }
 }
 
-function removeFromBank(token, value){
-  const bank = document.getElementById("invBank");
-  const tiles = Array.from(bank.querySelectorAll(".word"));
-  const t = tiles.find(x => x.dataset.token===token && x.dataset.value===value);
-  if(t) t.remove();
+function invCheck(){
+  // must have verb, person, gar. info required only if example has it.
+  if(!invState.verbInf || !invState.person || !invState.gar) return;
+  if(invChosen.info && !invState.info) return;
+
+  // verify verb in slot1 is correct conjugation
+  const conj = invConjugate(invState.verbInf, invState.person);
+
+  const slot1Text = document.getElementById("invSlot1").textContent.trim();
+  const slot2Text = document.getElementById("invSlot2").textContent.trim();
+  const slot3Text = document.getElementById("invSlot3").textContent.trim();
+  const slot4Text = document.getElementById("invSlot4").textContent.trim();
+
+  const okVerb = slot1Text === conj;
+  const okPerson = slot2Text === invState.person;
+  const okGar = slot3Text === "gär";
+  const okInfo = !invChosen.info || slot4Text === invChosen.info;
+
+  const ok = okVerb && okPerson && okGar && okInfo;
+
+  const slots = [document.getElementById("invSlot1"),document.getElementById("invSlot2"),document.getElementById("invSlot3"),document.getElementById("invSlot4")];
+  slots.forEach(s=>{
+    s.classList.remove("flash-green","flash-red");
+    void s.offsetWidth;
+    s.classList.add(ok ? "flash-green" : "flash-red");
+  });
+
+  setFb("invFeedback", ok ? "Richteg!" : "Nach eng Kéier.", ok);
+
+  if(ok){
+    setTimeout(()=>{
+      invPos++;
+      if(invPos >= invOrder.length){
+        showModal("Bravo!", "Alles fäerdeg!", ()=>{
+          invOrder = shuffle(INV_EXAMPLES);
+          invPos = 0;
+          invLoad();
+        });
+      }else{
+        invLoad();
+      }
+    }, 750);
+  }
 }
 
-function animTransform(slotEl, newText){
-  slotEl.classList.remove("magic");
-  void slotEl.offsetWidth;
-  slotEl.classList.add("magic");
-  setTimeout(()=>{ slotEl.textContent = newText; }, 170);
-}
-
-function expected
-Target form rules:
-- If given is AFF -> target is QUESTION, and we require:
-    1 = Ech
-    2 = verb in ECH form (magic transform after drop)
-    3 = gär (always gär in target; "net gär" -> "gär")
-    4 = info (if exists)    
-- If given is QUESTION -> target is AFF, and we require:
-    1 = Du
-    2 = verb in DU form (magic transform after drop)
-    3 = gär (always gär in target; also magic: "net gär" -> "gär")
-    4 = info (if exists)
-Important: placement is identical (1-4), only the subject/verb conjugation (and punctuation) switches.
-*/
-function expectedTarget(){
-  const targetIsQuestion = (invModeGiven==="AFF");
-  return {
-    isQuestion: targetIsQuestion,
-    subj: targetIsQuestion ? "Du" : "Ech",
-    verb: targetIsQuestion ? conjDu(invCurrent.verb) : conjEch(invCurrent.verb),
-    gar: "gär",
-    info: invNeedInfo ? invCurrent.info : null,
-    punct: targetIsQuestion ? "?" : "."
-  };
-}
-
-function invPlace(slotEl, slotNum, token, value){
-  // prevent overwriting
-  if(slotEl.classList.contains("filled")) return;
-
-  const exp = expectedTarget();
-
-  // determine what this slot should be
-  const slotRole = slotNum===1 ? "SUBJ" : slotNum===2 ? "VERB" : slotNum===3 ? "GAR" : "INFO";
-
-  if(token !== slotRole){
-    flash(slotEl, "flash-red");
-    invSetFeedback("Probéier nach eng Kéier.", false);
-    return;
-  }
-
-  slotEl.classList.add("filled");
-  flash(slotEl, "flash-green");
-
-  // Place + transform
-  if(token==="SUBJ"){
-    slotEl.textContent = value;                 // show what was dropped
-    removeFromBank("SUBJ", value);
-    animTransform(slotEl, exp.subj);            // magic to target subject
-    invPlaced[slotNum] = exp.subj;
-  }
-
-  if(token==="VERB"){
-    slotEl.textContent = value;
-    removeFromBank("VERB", value);
-    animTransform(slotEl, exp.verb);            // magic to target conjugation
-    invPlaced[slotNum] = exp.verb;
-  }
-
-  if(token==="GAR"){
-    slotEl.textContent = value;
-    removeFromBank("GAR", value);
-    animTransform(slotEl, exp.gar);             // magic: always gär
-    invPlaced[slotNum] = exp.gar;
-  }
-
-  if(token==="INFO"){
-    slotEl.textContent = value;
-    removeFromBank("INFO", value);
-    invPlaced[slotNum] = value;
-  }
-
-  invCheckComplete();
-}
-
-function invCheckComplete(){
-  const exp = expectedTarget();
-
-  if(!invPlaced[1] || !invPlaced[2] || !invPlaced[3]) return;
-  if(invNeedInfo && !invPlaced[4]) return;
-
-  const ok =
-    invPlaced[1] === exp.subj &&
-    invPlaced[2] === exp.verb &&
-    invPlaced[3] === exp.gar &&
-    (!invNeedInfo || invPlaced[4] === exp.info);
-
-  if(!ok){
-    invSetFeedback("Nach net ganz. Kuck d’Plazéierung 1–4.", false);
-    return;
-  }
-
-  invSetFeedback("Richteg!", true);
-
-  setTimeout(()=>{
-    invPos++;
-    if(invPos >= invOrder.length){
-      showModal("Bravo!", "Alles fäerdeg!", ()=>{
-        invOrder = shuffle(INV_EXAMPLES);
-        invPos = 0;
-        invLoadRound();
-      });
-    }else{
-      invLoadRound();
-    }
-  }, 750);
-}
-
-function wireInvSlotsOnce(){
-  if(window.__invWired) return;
-  ["t1","t2","t3","t4"].forEach((id, idx)=>{
-    const slot = document.getElementById(id);
-    if(!slot) return;
-
+function invWireSlots(){
+  document.querySelectorAll(".inv-slot").forEach(slot=>{
     slot.addEventListener("dragover", (e)=>{ e.preventDefault(); slot.classList.add("over"); });
     slot.addEventListener("dragleave", ()=> slot.classList.remove("over"));
     slot.addEventListener("drop", (e)=>{
       e.preventDefault();
       slot.classList.remove("over");
+
       const data = JSON.parse(e.dataTransfer.getData("text/plain"));
-      invPlace(slot, idx+1, data.token, data.value);
+      const sNum = slot.dataset.slot;
+
+      // basic slot-type expectations:
+      // 1 verb, 2 person, 3 gar, 4 info (optional)
+      if(sNum==="1" && data.type!=="verb"){ flash(slot,"flash-red"); return; }
+      if(sNum==="2" && data.type!=="person"){ flash(slot,"flash-red"); return; }
+      if(sNum==="3" && data.type!=="gar"){ flash(slot,"flash-red"); return; }
+      if(sNum==="4" && data.type!=="info"){ flash(slot,"flash-red"); return; }
+
+      // Place
+      if(sNum==="1"){
+        invState.verbInf = data.value;
+        invSetSlot(slot, "verb", data.value); // will be updated after person drop
+        slot.dataset.type = "verb";
+        invTryUpdateConjugatedVerb();
+      }
+      if(sNum==="2"){
+        invState.person = data.value;
+        invSetSlot(slot, "person", data.value);
+        slot.dataset.type = "person";
+        invTryUpdateConjugatedVerb();
+      }
+      if(sNum==="3"){
+        invState.gar = "gär";
+        invSetSlot(slot, "gar", "gär"); // always gär
+        slot.dataset.type = "gar";
+      }
+      if(sNum==="4"){
+        invState.info = data.value;
+        invSetSlot(slot, "info", data.value);
+        slot.dataset.type = "info";
+      }
+
+      invCheck();
     });
   });
-  window.__invWired = true;
 }
 
-function invLoadRound(){
-  wireInvSlotsOnce();
-
-  invCurrent = invOrder[invPos];
-  invNeedInfo = !!invCurrent.info;
-
-  // Randomly decide whether given is affirmative or question
-  invModeGiven = (Math.random() < 0.5) ? "AFF" : "Q";
-
-  document.getElementById("invProg").textContent = `${invPos+1} / ${invOrder.length}`;
-
-  clearTargetSlots(invNeedInfo);
-  fillGivenRow();
-  buildBankFromGiven();
+function invRender(){
+  // ensure wired once
+  if(!window.__invWired){
+    invWireSlots();
+    window.__invWired = true;
+  }
+  invLoad();
 }
 
 document.getElementById("invReset").addEventListener("click", ()=>{
-  invLoadRound();
+  invLoad();
 });
 document.getElementById("invNext").addEventListener("click", ()=>{
   invPos++;
@@ -1508,7 +1378,7 @@ document.getElementById("invNext").addEventListener("click", ()=>{
     invOrder = shuffle(INV_EXAMPLES);
     invPos = 0;
   }
-  invLoadRound();
+  invLoad();
 });
 
 /* ===================== INIT ===================== */
@@ -1516,5 +1386,6 @@ showGame(0);
 </script>
 </body>
 </html>
+
 
 
